@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53b246462221cc54c9b8e6283c1077dd, type: 3}
+  m_Name: MonsterPool
+  m_EditorClassIdentifier: 
+  ListPool:
+  - {fileID: 11400000, guid: 421a30667ac6c6b439a8cc85b74ac02f, type: 2}
+  - {fileID: 11400000, guid: a650bc58662325243ada4fd381041cf8, type: 2}
+  - {fileID: 11400000, guid: 6c2c18611dacda04d9b8c7b13a358444, type: 2}
+  - {fileID: 11400000, guid: e073dddfb5efa3642a6b34c0de66b12b, type: 2}
+  - {fileID: 11400000, guid: 544de04916452b3409e75b0871c66b65, type: 2}
