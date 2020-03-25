@@ -62,5 +62,9 @@ public partial class GameManager : MonoBehaviour
     public int Get_MonsterCollect(int index){
         return playerData.collectList[index];
     }
+
+    public int Get_Gold(){
+        return playerData.Gold;
+    }
 #endregion
 }

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: GameConstant
   m_EditorClassIdentifier: 
   MaxMonster: 20
-  StaminaExploreCost: 12
-  StaminaRecover: 0.1
-  DefaultStaminaMax: 12
+  StaminaExploreCost: 200
+  StaminaRecover: 1
+  DefaultStaminaMax: 200
   DefaultGold: 99999
-  EachStaminaPlus: 1
-  EachStaminaRecover: 0.1
+  EachStaminaPlus: 10
+  EachStaminaRecover: 0.5
