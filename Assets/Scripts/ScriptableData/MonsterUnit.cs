@@ -7,4 +7,5 @@ public class MonsterUnit : ScriptableObject
 {
     public Sprite icon;
     public int Probability;
+    public int gold;
 }

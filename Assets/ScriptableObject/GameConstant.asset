@@ -16,6 +16,6 @@ MonoBehaviour:
   StaminaExploreCost: 200
   StaminaRecover: 1
   DefaultStaminaMax: 200
-  DefaultGold: 99999
+  DefaultGold: 0
   EachStaminaPlus: 10
   EachStaminaRecover: 0.5
