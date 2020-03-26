@@ -19,6 +19,11 @@ public class MonsterCellLayout : MonoBehaviour
         Icon.sprite = data.icon;
         cellIndex = index;
         Icon.color = Color.black;
+
+        if(GameManager.Instance.gameConstant.isDebugMode){
+            Icon.color = Color.white;
+            TextName.text = data.unitName;
+        }
     }
 
     void Start()

@@ -6,6 +6,7 @@ using UnityEngine;
 public class MonsterUnit : ScriptableObject
 {
     public Sprite icon;
+    public GameObject Unit3D;
     public string unitName;
     public int Probability;
     public int gold;

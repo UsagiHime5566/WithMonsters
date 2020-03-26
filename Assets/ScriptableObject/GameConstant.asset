@@ -19,3 +19,4 @@ MonoBehaviour:
   DefaultGold: 0
   EachStaminaPlus: 20
   EachStaminaRecover: 0.5
+  isDebugMode: 1

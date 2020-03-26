@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Unit011
   m_EditorClassIdentifier: 
   icon: {fileID: 21300000, guid: f784a17797984d644a3a2b1057e44ddc, type: 3}
+  Unit3D: {fileID: 6955811605009832727, guid: 3f0d69a7021d8424aa991264d277fd02, type: 3}
   unitName: "\u65CB\u5F8B\u99AC"
   Probability: 14
   gold: 60

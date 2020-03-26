@@ -11,6 +11,8 @@ public class MapLayout : MonoBehaviour
     public RectTransform unitPool;
     public RectTransform prefabDummy;
     public RectTransform current;
+    public GameObject prefab3DUnit;
+    public Transform LookPoint;
 
     private void Start() {
         BTNSLAM.onClick.AddListener(OnSLAM);

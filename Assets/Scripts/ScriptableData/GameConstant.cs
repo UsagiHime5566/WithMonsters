@@ -17,4 +17,7 @@ public class GameConstant : ScriptableObject
     [Header("Plus Constant")]
     public float EachStaminaPlus = 1f;
     public float EachStaminaRecover = 0.1f;
+    
+    [Header("Debug Mode")]
+    public bool isDebugMode = false;
 }
