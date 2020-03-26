@@ -12,7 +12,7 @@ class AutoIncreaseBundle : IPreprocessBuildWithReport
         int androidBV = PlayerSettings.Android.bundleVersionCode;
         int iosBV = System.Convert.ToInt32(PlayerSettings.iOS.buildNumber);
 
-        int BV = Mathf.Max(androidBV, iosBV);
+        int BV = Mathf.Max(androidBV, iosBV) + 1;
         PlayerSettings.Android.bundleVersionCode = BV;
         PlayerSettings.iOS.buildNumber = BV.ToString();
     }

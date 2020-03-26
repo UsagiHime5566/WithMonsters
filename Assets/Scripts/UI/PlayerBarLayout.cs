@@ -22,8 +22,8 @@ public class PlayerBarLayout : MonoBehaviour
         while(true){
             yield return waitUI;
 
-            ExploreBar.fillAmount = GameManager.Instance.Get_Explore();
-            ExploreValue.text = ExploreBar.fillAmount.ToString("0.00") + "%";
+            ExploreBar.fillAmount = GameManager.Instance.Get_Explore()/100f;
+            ExploreValue.text = GameManager.Instance.Get_Explore() + "%";
 
             StaminaBar.fillAmount = GameManager.Instance.Get_Stamina() / GameManager.Instance.Get_StaminaMax();
             StaminaValue.text = string.Format("{0}/{1}", GameManager.Instance.Get_Stamina().ToString("0"), GameManager.Instance.Get_StaminaMax().ToString("0"));

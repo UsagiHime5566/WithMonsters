@@ -12,9 +12,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53b246462221cc54c9b8e6283c1077dd, type: 3}
   m_Name: MonsterPool
   m_EditorClassIdentifier: 
+  probabilitys:
+  - 8.417509
+  - 8.417509
+  - 8.417509
+  - 8.080808
+  - 7.7441072
+  - 7.4074073
+  - 7.070707
+  - 6.734007
+  - 6.060606
+  - 5.387205
+  - 4.7138047
+  - 4.040404
+  - 3.3670034
+  - 3.030303
+  - 2.6936026
+  - 2.3569024
+  - 2.020202
+  - 1.6835017
+  - 1.3468013
+  - 1.010101
   ListPool:
   - {fileID: 11400000, guid: 421a30667ac6c6b439a8cc85b74ac02f, type: 2}
   - {fileID: 11400000, guid: a650bc58662325243ada4fd381041cf8, type: 2}
   - {fileID: 11400000, guid: 6c2c18611dacda04d9b8c7b13a358444, type: 2}
   - {fileID: 11400000, guid: e073dddfb5efa3642a6b34c0de66b12b, type: 2}
   - {fileID: 11400000, guid: 544de04916452b3409e75b0871c66b65, type: 2}
+  - {fileID: 11400000, guid: 0ebe30c2119a11f4d9d6f979d0cf90e7, type: 2}
+  - {fileID: 11400000, guid: c167dcbdc022331419d4c1c04a32679a, type: 2}
+  - {fileID: 11400000, guid: 90431c981f135be4a9124697d32c8e2a, type: 2}
+  - {fileID: 11400000, guid: 9f8f90a6b90ab224296df4c30c6da005, type: 2}
+  - {fileID: 11400000, guid: 37ea99f138b566a40ab03c8d9e11b55b, type: 2}
+  - {fileID: 11400000, guid: 5df343e484510054db7aa90f06d0716a, type: 2}
+  - {fileID: 11400000, guid: 44627b29dac0870499b720e45378c0ba, type: 2}
+  - {fileID: 11400000, guid: 23cb413cf9e1fc646ad0cb6559846111, type: 2}
+  - {fileID: 11400000, guid: 50be64354d1ef3143a21f04c042c80d3, type: 2}
+  - {fileID: 11400000, guid: ec4cec8fb1993ae4297ffe927feda713, type: 2}
+  - {fileID: 11400000, guid: 1c701cfaba7efc34fab875bc01f7fd28, type: 2}
+  - {fileID: 11400000, guid: ed17f60c59ee306488becdfee5f33ca9, type: 2}
+  - {fileID: 11400000, guid: e9c91b20c64c547469d331447dfca9a6, type: 2}
+  - {fileID: 11400000, guid: 9c371ae4be208a14998113bf29541d53, type: 2}
+  - {fileID: 11400000, guid: 5680c1bce0a50e94a844231f7cb3519a, type: 2}

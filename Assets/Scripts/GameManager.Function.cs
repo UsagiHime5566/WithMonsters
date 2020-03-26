@@ -5,10 +5,8 @@ using UnityEngine;
 public partial class GameManager : MonoBehaviour
 {
 
-    public void SetupNewGame(){
-        playerData = new PlayerData();
-        playerData.Stamina = gameConstant.DefaultStaminaMax;
-        playerData.Gold = gameConstant.DefaultGold;
+    public void SetupGame(){
+        playerData = SaveManager.Instance.LoadData();
     }
 
     public void CostStamina(){
@@ -38,6 +36,10 @@ public partial class GameManager : MonoBehaviour
         playerData.PlusStaminaRecover += 1;
     }
 
+    public void ExploreIncrease(){
+        playerData.Explore += 1;
+    }
+
     public void AddMonsterCatch(int index){
         if(playerData.collectList == null || index >= playerData.collectList.Count)
             return;
@@ -45,9 +47,18 @@ public partial class GameManager : MonoBehaviour
         playerData.collectList[index] += 1;
     }
 
+    public void AddGold(int num){
+        playerData.Gold += num;
+    }
+
+    public void SetTimeTick(long val){
+        if(val > playerData.lastUpdateTimeTick)
+            playerData.lastUpdateTimeTick = val;
+    }
+
 #region Get Game Data
 
-    public float Get_Explore(){
+    public int Get_Explore(){
         return playerData.Explore;
     }
 

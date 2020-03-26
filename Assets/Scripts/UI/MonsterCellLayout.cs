@@ -6,11 +6,21 @@ using TMPro;
 
 public class MonsterCellLayout : MonoBehaviour
 {
+    public Image Icon;
     public TextMeshProUGUI TextName;
     public TextMeshProUGUI TextNumber;
 
     [Header("Data")]
-    public int Index;
+    public MonsterUnit data;
+    public int cellIndex;
+
+    public void InitUI(MonsterUnit src, int index){
+        data = src;
+        Icon.sprite = data.icon;
+        cellIndex = index;
+        Icon.color = Color.black;
+    }
+
     void Start()
     {
         StartCoroutine(UpdateCell());
@@ -21,7 +31,12 @@ public class MonsterCellLayout : MonoBehaviour
         while(true){
             yield return waitCell;
 
-            TextNumber.text = string.Format("x {0}", GameManager.Instance.Get_MonsterCollect(Index));
+            int currentNum = GameManager.Instance.Get_MonsterCollect(cellIndex);
+            if(currentNum > 0) {
+                TextNumber.text = string.Format("x {0}", currentNum);
+                Icon.color = Color.white;
+                TextName.text = data.unitName;
+            }
         }
     }
 }

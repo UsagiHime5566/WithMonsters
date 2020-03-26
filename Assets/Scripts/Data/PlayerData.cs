@@ -6,7 +6,7 @@ using UnityEngine;
 [Serializable]
 public class PlayerData
 {
-    public float Explore;
+    public int Explore;
     public float Stamina;
     public int Gold;
     public int PlusStaminaMax;
@@ -20,6 +20,9 @@ public class PlayerData
 
         if(!GameManager.Instance)
             return;
+
+        Stamina = GameManager.Instance.gameConstant.DefaultStaminaMax;
+        Gold = GameManager.Instance.gameConstant.DefaultGold;
 
         int max = GameManager.Instance.gameConstant.MaxMonster;
         for (int i = 0; i < max; i++)
