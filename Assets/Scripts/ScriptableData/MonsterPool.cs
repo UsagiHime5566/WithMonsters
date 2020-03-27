@@ -7,6 +7,7 @@ public class MonsterPool : ScriptableObject
 {
     public List<float> probabilitys;
     public List<MonsterUnit> ListPool;
+    public List<ParticleSystem> jumpEffects;
 
     public MonsterUnit GetRandomUnit(){
         float max = 0;
@@ -41,5 +42,9 @@ public class MonsterPool : ScriptableObject
             float pro = ListPool[i].Probability / max;
             probabilitys.Add(pro * 100);
         }
+    }
+
+    public ParticleSystem GetRandomEffect(){
+        return jumpEffects[Random.Range(0, jumpEffects.Count)];
     }
 }

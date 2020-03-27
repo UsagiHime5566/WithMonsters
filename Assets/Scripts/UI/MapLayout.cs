@@ -11,6 +11,8 @@ public class MapLayout : MonoBehaviour
     public TextMeshProUGUI TextTip;
     public RectTransform unitPool;
     public Transform LookPoint;
+    public float BornPos = 0.35f;
+    public ParticleSystem BornEffect;
     public GameObject current;
     public string StringTip = "尚缺少 {0} 能量";
 
@@ -46,6 +48,8 @@ public class MapLayout : MonoBehaviour
         GameManager.Instance.CostStamina();
         GameManager.Instance.AddMonsterCatch(GameManager.Instance.monsterPool.ListPool.FindIndex(x => x == getUnit));
         GameManager.Instance.AddGold(getUnit.gold);
+
+        Instantiate(BornEffect, LookPoint.position + Vector3.up * 0.35f, Quaternion.identity);
 
         Debug.Log("Create Monster with:" + getUnit.unitName);
     }
