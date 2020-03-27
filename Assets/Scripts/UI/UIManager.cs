@@ -27,15 +27,9 @@ public partial class UIManager : MonoBehaviour
     void Start()
     {
         BTNGameStart.onClick.AddListener(BTNClickGameStart);
-        BTNMap.onClick.AddListener(delegate { BTNClickFunction(PageMap); });
-        BTNBag.onClick.AddListener(delegate { BTNClickFunction(PageBag); });
-        BTNCollect.onClick.AddListener(delegate { BTNClickFunction(PageCollect); });
-        BTNSystem.onClick.AddListener(delegate { BTNClickFunction(PageSystem); });
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        BTNMap.onClick.AddListener(delegate { BTNClickFunction(PageMap, BTNMap); });
+        BTNBag.onClick.AddListener(delegate { BTNClickFunction(PageBag, BTNBag); });
+        BTNCollect.onClick.AddListener(delegate { BTNClickFunction(PageCollect, BTNCollect); });
+        BTNSystem.onClick.AddListener(delegate { BTNClickFunction(PageSystem, BTNSystem); });
     }
 }
