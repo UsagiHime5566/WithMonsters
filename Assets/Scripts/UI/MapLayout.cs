@@ -8,11 +8,11 @@ public class MapLayout : MonoBehaviour
 {
     public Button BTNSLAM;
     public TextMeshProUGUI BTNText;
+    public TextMeshProUGUI TextTip;
     public RectTransform unitPool;
-    public RectTransform prefabDummy;
-    public RectTransform current;
-    public GameObject prefab3DUnit;
     public Transform LookPoint;
+    public GameObject current;
+    public string StringTip = "尚缺少 {0} 能量";
 
     private void Start() {
         BTNSLAM.onClick.AddListener(OnSLAM);
@@ -39,8 +39,8 @@ public class MapLayout : MonoBehaviour
 
         //設置 SLAM
         MonsterUnit getUnit = GameManager.Instance.monsterPool.GetRandomUnit();
-        current = Instantiate(prefabDummy, unitPool);
-        current.GetComponent<Image>().sprite = getUnit.icon;
+        current = Instantiate(getUnit.Unit3D, LookPoint);
+        UnitAnim anim = current.GetComponent<UnitAnim>();
 
         //更新 使用者資料
         GameManager.Instance.CostStamina();
@@ -54,9 +54,20 @@ public class MapLayout : MonoBehaviour
         if(GameManager.Instance.CheckStamina()){
             BTNSLAM.interactable = true;
             BTNText.color = BTNSLAM.colors.normalColor;
+            PopUpTextTip(false);
         } else {
             BTNSLAM.interactable = false;
             BTNText.color = BTNSLAM.colors.disabledColor;
+            PopUpTextTip(true);
         }
+    }
+
+    void PopUpTextTip(bool val){
+        if(val) {
+            TextTip.color = new Color(1, 1, 1, 1);
+            TextTip.text = string.Format(StringTip, GameManager.Instance.gameConstant.StaminaExploreCost - GameManager.Instance.Get_Stamina());
+        }
+        else
+            TextTip.color = new Color(1, 1, 1, 0);
     }
 }
