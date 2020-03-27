@@ -5,24 +5,39 @@ using UnityEngine;
 [CreateAssetMenu]
 public class MonsterPool : ScriptableObject
 {
+    public List<ExploreSheet> exloreTable;
     public List<float> probabilitys;
     public List<MonsterUnit> ListPool;
     public List<ParticleSystem> jumpEffects;
 
-    public MonsterUnit GetRandomUnit(){
-        float max = 0;
-        foreach (var item in ListPool)
+    public MonsterUnit GetRandomUnit(int exploreRate){
+        
+        int maxPool = 0;
+        for (int i = exloreTable.Count - 1; i >= 0 ; i--)
         {
-            max += item.Probability;
+            if(GameManager.Instance.Get_Explore() <= exloreTable[i].explore)
+                maxPool = exloreTable[i].count;
         }
 
-        float random = Random.Range(0, max);
-        float stack = 0;
-        foreach (var item in ListPool)
+        float maxProb = 0;
+        for (int i = 0; i < maxPool; i++)
         {
-            stack += item.Probability;
+            maxProb += ListPool[i].Probability;
+        }
+
+        float random = Random.Range(0, maxProb);
+        float stack = 0;
+
+        #if UNITY_EDITOR
+            //Debug.Log($"Get pool {random} of {maxPool}");
+        #endif
+
+        for (int i = 0; i < maxPool; i++)
+        {
+            stack += ListPool[i].Probability;
             if(random <= stack)
-                return item;
+                return ListPool[i];
+
         }
 
         return null;
@@ -47,4 +62,12 @@ public class MonsterPool : ScriptableObject
     public ParticleSystem GetRandomEffect(){
         return jumpEffects[Random.Range(0, jumpEffects.Count)];
     }
+
+    [System.Serializable]
+    public class ExploreSheet
+    {
+        public int explore;
+        public int count;
+    }
 }
+

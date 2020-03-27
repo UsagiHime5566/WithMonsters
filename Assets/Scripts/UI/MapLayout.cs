@@ -40,7 +40,7 @@ public class MapLayout : MonoBehaviour
             Destroy(current.gameObject);
 
         //設置 SLAM
-        MonsterUnit getUnit = GameManager.Instance.monsterPool.GetRandomUnit();
+        MonsterUnit getUnit = GameManager.Instance.monsterPool.GetRandomUnit(GameManager.Instance.Get_Explore());
         current = Instantiate(getUnit.Unit3D, LookPoint);
         UnitAnim anim = current.GetComponent<UnitAnim>();
 
@@ -51,7 +51,7 @@ public class MapLayout : MonoBehaviour
 
         Instantiate(BornEffect, LookPoint.position + Vector3.up * 0.35f, Quaternion.identity);
 
-        Debug.Log("Create Monster with:" + getUnit.unitName);
+        //Debug.Log("Create Monster with:" + getUnit.unitName);
     }
 
     void CheckButtonStats(){

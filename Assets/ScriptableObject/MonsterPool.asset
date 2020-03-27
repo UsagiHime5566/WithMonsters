@@ -12,6 +12,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53b246462221cc54c9b8e6283c1077dd, type: 3}
   m_Name: MonsterPool
   m_EditorClassIdentifier: 
+  exloreTable:
+  - explore: 10
+    count: 5
+  - explore: 20
+    count: 7
+  - explore: 30
+    count: 8
+  - explore: 40
+    count: 10
+  - explore: 50
+    count: 12
+  - explore: 60
+    count: 14
+  - explore: 70
+    count: 16
+  - explore: 80
+    count: 18
+  - explore: 90
+    count: 19
+  - explore: 100
+    count: 20
   probabilitys:
   - 8.417509
   - 8.417509
