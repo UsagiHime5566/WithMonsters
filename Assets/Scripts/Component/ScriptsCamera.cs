@@ -45,6 +45,7 @@ public class ScriptsCamera : MonoBehaviour
         }
 
         background.texture = runningWebcam;
+        background.gameObject.SetActive(true);
         runningWebcam.Play();
         
 

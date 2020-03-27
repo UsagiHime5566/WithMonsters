@@ -56,6 +56,10 @@ public partial class GameManager : MonoBehaviour
             playerData.lastUpdateTimeTick = val;
     }
 
+    public void SetSoundUse(bool val){
+        playerData.DisableSound = !val;
+    }
+
 #region Get Game Data
 
     public int Get_Explore(){
@@ -76,6 +80,10 @@ public partial class GameManager : MonoBehaviour
 
     public int Get_Gold(){
         return playerData.Gold;
+    }
+
+    public bool Get_DisableSound(){
+        return playerData.DisableSound;
     }
 #endregion
 }

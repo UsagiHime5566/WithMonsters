@@ -5,13 +5,33 @@ using UnityEngine.UI;
 
 public class SystemLayout : MonoBehaviour
 {
-    public Button BTNExit;
+    public OptionCellLayout OptionSound;
+    public string stringEnable = "On";
+    public string stringDisable = "Off";
     void Start()
     {
-        BTNExit.onClick.AddListener(QuitGame);
+        OptionSound.BTNThis.onClick.AddListener(SwitchSound);
+        UpdateOptionSoundUI();
     }
 
-    void QuitGame(){
-        Application.Quit();
+    void SwitchSound(){
+        if(GameManager.Instance.Get_DisableSound()){
+            GameManager.Instance.SetSoundUse(true);
+            
+        } else {
+            GameManager.Instance.SetSoundUse(false);
+        }
+
+        UpdateOptionSoundUI();
+    }
+
+    void UpdateOptionSoundUI(){
+        if(GameManager.Instance.Get_DisableSound()){
+            OptionSound.TextInfo.text = stringDisable;
+            UISounds.instance.SetMixerVolume(-80);
+        } else {
+            OptionSound.TextInfo.text = stringEnable;
+            UISounds.instance.SetMixerVolume(0);
+        }
     }
 }

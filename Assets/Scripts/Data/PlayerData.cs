@@ -14,6 +14,9 @@ public class PlayerData
     public int ExploreStick;
     public List<int> collectList;
     public long lastUpdateTimeTick;
+    
+    //System option
+    public bool DisableSound;
 
     public PlayerData(){
         collectList = new List<int>();
