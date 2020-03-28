@@ -167,8 +167,8 @@ PlayerSettings:
     Android: com.Artpower.MonsterSLAM
     Standalone: com.Company.ProductName
   buildNumber:
-    iPhone: 16
-  AndroidBundleVersionCode: 16
+    iPhone: 20
+  AndroidBundleVersionCode: 20
   AndroidMinSdkVersion: 19
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1

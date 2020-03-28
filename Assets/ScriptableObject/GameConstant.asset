@@ -15,7 +15,7 @@ MonoBehaviour:
   MaxMonster: 20
   StaminaExploreCost: 200
   StaminaRecover: 1
-  DefaultStaminaMax: 200
+  DefaultStaminaMax: 400
   DefaultGold: 0
   EachStaminaPlus: 20
   EachStaminaRecover: 0.5

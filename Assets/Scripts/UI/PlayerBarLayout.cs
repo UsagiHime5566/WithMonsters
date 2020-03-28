@@ -49,7 +49,6 @@ public class PlayerBarLayout : MonoBehaviour
                 lastGold = thisGold;
                 DOTween.To(() => stringTextGold, x => stringTextGold = x, lastGold, 0.5f);
             }
-            //GoldValue.text = GameManager.Instance.Get_Gold().ToString();
         }
     }
 }

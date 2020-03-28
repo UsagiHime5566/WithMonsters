@@ -43,15 +43,21 @@ public class MapLayout : MonoBehaviour
         MonsterUnit getUnit = GameManager.Instance.monsterPool.GetRandomUnit(GameManager.Instance.Get_Explore());
         current = Instantiate(getUnit.Unit3D, LookPoint);
         UnitAnim anim = current.GetComponent<UnitAnim>();
+        DoStartTracking();
 
         //更新 使用者資料
         GameManager.Instance.CostStamina();
         GameManager.Instance.AddMonsterCatch(GameManager.Instance.monsterPool.ListPool.FindIndex(x => x == getUnit));
         GameManager.Instance.AddGold(getUnit.gold);
 
+        //特效
         Instantiate(BornEffect, LookPoint.position + Vector3.up * 0.35f, Quaternion.identity);
 
         //Debug.Log("Create Monster with:" + getUnit.unitName);
+    }
+
+    void DoStartTracking(){
+        VoidAR.GetInstance().startMarkerlessTracking();
     }
 
     void CheckButtonStats(){

@@ -40,5 +40,8 @@ public partial class UIManager : MonoBehaviour
         ToPage(PageMap);
         ToBTN(BTNMap);
         BackgroundShow(false);
+
+        //Require Permission
+        RequirePermissions.instance.SendRequire();
     }
 }

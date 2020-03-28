@@ -11,6 +11,7 @@ public partial class UIManager : MonoBehaviour
     public Button BTNGameStart;
 
     [Header("Page View")]
+    public PageLayout HardwareRequirePage;
     public PageLayout PageMap;
     public PageLayout PageBag;
     public PageLayout PageCollect;
@@ -31,6 +32,10 @@ public partial class UIManager : MonoBehaviour
         BTNBag.onClick.AddListener(delegate { BTNClickFunction(PageBag, BTNBag); BackgroundShow(true);});
         BTNCollect.onClick.AddListener(delegate { BTNClickFunction(PageCollect, BTNCollect); BackgroundShow(true);});
         BTNSystem.onClick.AddListener(delegate { BTNClickFunction(PageSystem, BTNSystem); BackgroundShow(true);});
+
+        RequirePermissions.instance.OnNoPermission += delegate {
+            HardwareRequirePage.OpenPage();
+        };
     }
 
     void BackgroundShow(bool show){
