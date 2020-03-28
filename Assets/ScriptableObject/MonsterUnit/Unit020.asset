@@ -16,4 +16,4 @@ MonoBehaviour:
   Unit3D: {fileID: 1017126470998399181, guid: 60a8c7d188e406c498ca681006270122, type: 3}
   unitName: "\u98DF\u5922\u8005"
   Probability: 3
-  gold: 250
+  gold: 1000

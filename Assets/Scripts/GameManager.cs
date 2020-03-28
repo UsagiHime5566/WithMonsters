@@ -26,6 +26,10 @@ public partial class GameManager : MonoBehaviour
 
     void Start()
     {
+        //使隨機數更隨機
+        System.DateTime seed = GetLocalTime();
+        UnityEngine.Random.InitState ((int) seed.Ticks);
+        
         StartCoroutine(StaminaRecover());
     }
 
