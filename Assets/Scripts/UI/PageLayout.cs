@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 [RequireComponent(typeof(CanvasGroup))]
 public class PageLayout : MonoBehaviour
 {
     [HideInInspector] public CanvasGroup canvasGroup;
+    [HideInInspector] public List<CustomTween> tweens;
     public bool DoInitialize = true;
 
     [Header("Editor Switch")]
@@ -23,35 +25,44 @@ public class PageLayout : MonoBehaviour
 
     void Awake(){
         canvasGroup = GetComponent<CanvasGroup>();
-
+        
         if(!DoInitialize)
             return;
 
         canvasGroup.alpha = 0;
         canvasGroup.blocksRaycasts = false;
-
     }
 
     void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        tweens = new List<CustomTween>(GetComponentsInChildren<CustomTween>());
     }
 
     public void OpenPage(){
-        //TODO
-        canvasGroup.alpha = 1;
+        //canvasGroup.alpha = 1;
+        canvasGroup.DOFade(1, 0.2f);
         canvasGroup.blocksRaycasts = true;
+
+        if(tweens == null)
+            return;
+        
+        foreach (var item in tweens)
+        {
+            item.RunEnterTween();
+        }
     }
 
     public void ClosePage(){
-        //TODO
-        canvasGroup.alpha = 0;
+        //canvasGroup.alpha = 0;
+        canvasGroup.DOFade(0, 0.2f);
         canvasGroup.blocksRaycasts = false;
+
+        if(tweens == null)
+            return;
+        
+        foreach (var item in tweens)
+        {
+            item.RunExitTween();
+        }
     }
 }

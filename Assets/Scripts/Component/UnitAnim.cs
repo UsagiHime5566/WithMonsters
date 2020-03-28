@@ -35,14 +35,22 @@ public class UnitAnim : MonoBehaviour
 
     void Start(){
         transform.position = new Vector3(-horizonJump/2, 0, 0);
-        transform.DOMoveX(horizonJump, moveDuration * 2).SetLoops(-1, LoopType.Yoyo).OnStepComplete(()=>{
-            Instantiate(GameManager.Instance.monsterPool.GetRandomEffect(), transform.position, Quaternion.identity).transform.localScale *= 0.1f;
-        });
-
-        transform.DOLocalMoveY(moveAmount, moveDuration).SetLoops(-1, LoopType.Yoyo);
-
         float targetStretch = transform.localScale.y * stretchAmount;
-        transform.DOScaleY(targetStretch, moveDuration).SetLoops(-1, LoopType.Yoyo);
+
+        // transform.DOMoveX(horizonJump, moveDuration * 2).SetLoops(-1, LoopType.Yoyo).OnStepComplete(()=>{
+        //     Instantiate(GameManager.Instance.monsterPool.GetRandomEffect(), transform.position, Quaternion.identity).transform.localScale *= 0.1f;
+        // });
+
+        //transform.DOLocalMoveY(moveAmount, moveDuration).SetLoops(-1, LoopType.Yoyo);
+        //transform.DOScaleY(targetStretch, moveDuration).SetLoops(-1, LoopType.Yoyo);
+
+        Sequence s = DOTween.Sequence();
+        s.Append(transform.DOMoveX(horizonJump, moveDuration * 2).OnStepComplete(()=>{
+            Instantiate(GameManager.Instance.monsterPool.GetRandomEffect(), transform.position, Quaternion.identity).transform.localScale *= 0.1f;
+        }));
+        s.Join(transform.DOLocalMoveY(moveAmount, moveDuration).SetLoops(2, LoopType.Yoyo));
+        s.Join(transform.DOScaleY(targetStretch, moveDuration).SetLoops(2, LoopType.Yoyo));
+        s.SetLoops(-1, LoopType.Yoyo);
 
         StartCoroutine(BodyAngle());
     }

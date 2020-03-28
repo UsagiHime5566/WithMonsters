@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public partial class UIManager : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public partial class UIManager : MonoBehaviour
     public PageLayout PageBag;
     public PageLayout PageCollect;
     public PageLayout PageSystem;
+    public Image Background;
+    public float bgFadeTimeConst = 0.5f;
 
     [Header("Function Button")]
     public Button BTNMap;
@@ -21,15 +24,19 @@ public partial class UIManager : MonoBehaviour
     public Button BTNCollect;
     public Button BTNSystem;
 
-
-
-    // Start is called before the first frame update
     void Start()
     {
         BTNGameStart.onClick.AddListener(BTNClickGameStart);
-        BTNMap.onClick.AddListener(delegate { BTNClickFunction(PageMap, BTNMap); });
-        BTNBag.onClick.AddListener(delegate { BTNClickFunction(PageBag, BTNBag); });
-        BTNCollect.onClick.AddListener(delegate { BTNClickFunction(PageCollect, BTNCollect); });
-        BTNSystem.onClick.AddListener(delegate { BTNClickFunction(PageSystem, BTNSystem); });
+        BTNMap.onClick.AddListener(delegate { BTNClickFunction(PageMap, BTNMap); BackgroundShow(false);});
+        BTNBag.onClick.AddListener(delegate { BTNClickFunction(PageBag, BTNBag); BackgroundShow(true);});
+        BTNCollect.onClick.AddListener(delegate { BTNClickFunction(PageCollect, BTNCollect); BackgroundShow(true);});
+        BTNSystem.onClick.AddListener(delegate { BTNClickFunction(PageSystem, BTNSystem); BackgroundShow(true);});
+    }
+
+    void BackgroundShow(bool show){
+        if(show)
+            Background.DOFade(1, bgFadeTimeConst).SetAutoKill();
+        else
+            Background.DOFade(0, bgFadeTimeConst).SetAutoKill();
     }
 }

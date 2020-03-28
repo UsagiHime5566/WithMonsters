@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public partial class UIManager : MonoBehaviour
 {
@@ -24,18 +25,20 @@ public partial class UIManager : MonoBehaviour
         currentBTN = btn;
     }
 
-
-
     public void BTNClickFunction(PageLayout targetPage, Button targetBTN){
-        //TODO Effect
         ToPage(targetPage);
         ToBTN(targetBTN);
     }
 
     public void BTNClickGameStart(){
-        PageWelcome.canvasGroup.alpha = 0;
+        //PageWelcome.canvasGroup.alpha = 0;
+        PageWelcome.canvasGroup.DOFade(0, 1);
         PageWelcome.canvasGroup.blocksRaycasts = false;
+        PageWelcome.GetComponent<CustomTween>()?.RunEnterTween();
+
+        //Enter Game
         ToPage(PageMap);
         ToBTN(BTNMap);
+        BackgroundShow(false);
     }
 }
