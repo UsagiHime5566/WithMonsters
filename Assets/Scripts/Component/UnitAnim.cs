@@ -24,6 +24,8 @@ public class UnitAnim : MonoBehaviour
 
     float lerpParam = 0.1f;
 
+    [HideInInspector] public Sequence tweenAnim;
+
     List<float> bodyAngles = new List<float>(){
         0,
         0,
@@ -44,13 +46,13 @@ public class UnitAnim : MonoBehaviour
         //transform.DOLocalMoveY(moveAmount, moveDuration).SetLoops(-1, LoopType.Yoyo);
         //transform.DOScaleY(targetStretch, moveDuration).SetLoops(-1, LoopType.Yoyo);
 
-        Sequence s = DOTween.Sequence();
-        s.Append(transform.DOMoveX(horizonJump, moveDuration * 2).OnStepComplete(()=>{
+        tweenAnim = DOTween.Sequence();
+        tweenAnim.Append(transform.DOMoveX(horizonJump, moveDuration * 2).OnStepComplete(()=>{
             Instantiate(GameManager.Instance.monsterPool.GetRandomEffect(), transform.position, Quaternion.identity).transform.localScale *= 0.1f;
         }));
-        s.Join(transform.DOLocalMoveY(moveAmount, moveDuration).SetLoops(2, LoopType.Yoyo));
-        s.Join(transform.DOScaleY(targetStretch, moveDuration).SetLoops(2, LoopType.Yoyo));
-        s.SetLoops(-1, LoopType.Yoyo);
+        tweenAnim.Join(transform.DOLocalMoveY(moveAmount, moveDuration).SetLoops(2, LoopType.Yoyo));
+        tweenAnim.Join(transform.DOScaleY(targetStretch, moveDuration).SetLoops(2, LoopType.Yoyo));
+        tweenAnim.SetLoops(-1, LoopType.Yoyo);
 
         StartCoroutine(BodyAngle());
     }
@@ -101,6 +103,31 @@ public class UnitAnim : MonoBehaviour
         // if(FootLeft2) FootLeft2.Rotate(0, 0, Random.Range(randMin, randMax));
         // if(FootLeft2) if(FootLeft2.eulerAngles.z > rotMax) FootLeft2.eulerAngles = new Vector3(0, 0, rotMax);
         // if(FootLeft2) if(FootLeft2.eulerAngles.z < -rotMax) FootLeft2.eulerAngles = new Vector3(0, 0, -rotMax);
+
+    }
+
+    void OnDestroy() {
+        if(tweenAnim == null)
+            return;
+        tweenAnim.Kill();
+    }
+
+    private void OnApplicationPause(bool pauseStatus) {
+        if(!pauseStatus)
+            return;
+        if(tweenAnim == null)
+            return;
+
+        DestroySelf();
+    }
+
+    public void DestroySelf(){
+        Destroy(gameObject);
+
+        if(tweenAnim == null)
+            return;
+        tweenAnim.Kill();
+        
     }
 
     [ContextMenu("Setup")]

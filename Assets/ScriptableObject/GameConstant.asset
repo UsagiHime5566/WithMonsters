@@ -17,6 +17,6 @@ MonoBehaviour:
   StaminaRecover: 1
   DefaultStaminaMax: 400
   DefaultGold: 0
-  EachStaminaPlus: 20
+  EachStaminaPlus: 50
   EachStaminaRecover: 0.5
   isDebugMode: 0
