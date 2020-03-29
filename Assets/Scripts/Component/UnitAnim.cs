@@ -1,15 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using DG.Tweening;
 
-public class UnitAnim : MonoBehaviour
+public class UnitAnim : MonoBehaviour , IPointerDownHandler
 {
     public Transform Body;
     public Transform HandRight;
     public Transform HandLeft;
     public Transform FootRight;
     public Transform FootLeft;
+    public Transform Cry;
     
     [Header("Others")]
     public Transform FootRight2;
@@ -24,6 +26,10 @@ public class UnitAnim : MonoBehaviour
 
     float lerpParam = 0.1f;
 
+    int hitTimes = 0;
+    int maxHitTimes;
+    public System.Action OnHitSelf;
+
     [HideInInspector] public Sequence tweenAnim;
 
     List<float> bodyAngles = new List<float>(){
@@ -36,6 +42,8 @@ public class UnitAnim : MonoBehaviour
     };
 
     void Start(){
+        maxHitTimes = Random.Range(3, 8);
+
         transform.position = new Vector3(-horizonJump/2, 0, 0);
         float targetStretch = transform.localScale.y * stretchAmount;
 
@@ -106,6 +114,25 @@ public class UnitAnim : MonoBehaviour
 
     }
 
+    public void OnPointerDown(PointerEventData eventData){
+        if(hitTimes >= maxHitTimes)
+            return;
+
+        hitTimes++;
+        OnHitSelf?.Invoke();
+        RaycastHit hit;
+        if(Physics.Raycast(Camera.main.ScreenPointToRay(eventData.position), out hit)) {
+            Instantiate(GameManager.Instance.monsterPool.GetRandomHit(), hit.point, Quaternion.identity);
+        }
+
+        if(hitTimes < maxHitTimes)
+            return;
+        if(Cry == null)
+            return;
+        
+        Cry.gameObject.SetActive(true);
+    }
+
     void OnDestroy() {
         if(tweenAnim == null)
             return;
@@ -139,5 +166,7 @@ public class UnitAnim : MonoBehaviour
         FootLeft = transform.Find("Leg2");
         FootRight2 = transform.Find("Leg11");
         FootLeft2 = transform.Find("Leg22");
+        Cry = transform.Find("Cry");
+        Cry.gameObject.SetActive(false);
     }
 }

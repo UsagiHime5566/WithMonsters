@@ -15,6 +15,7 @@ public class MapLayout : MonoBehaviour
     public ParticleSystem BornEffect;
     public GameObject current;
     public string StringTip = "尚缺少 {0} 能量";
+    public I2.Loc.LocalizedString TermTip;
 
     private void Start() {
         BTNSLAM.onClick.AddListener(OnSLAM);
@@ -43,6 +44,9 @@ public class MapLayout : MonoBehaviour
         MonsterUnit getUnit = GameManager.Instance.monsterPool.GetRandomUnit(GameManager.Instance.Get_Explore());
         current = Instantiate(getUnit.Unit3D, LookPoint);
         UnitAnim anim = current.GetComponent<UnitAnim>();
+        anim.OnHitSelf += delegate {
+            GameManager.Instance.AddGold(getUnit.gold/10);
+        };
         DoStartTracking();
 
         //更新 使用者資料
@@ -75,7 +79,7 @@ public class MapLayout : MonoBehaviour
     void PopUpTextTip(bool val){
         if(val) {
             TextTip.color = new Color(1, 1, 1, 1);
-            TextTip.text = string.Format(StringTip, GameManager.Instance.gameConstant.StaminaExploreCost - GameManager.Instance.Get_Stamina());
+            TextTip.text = string.Format(TermTip.ToString(), GameManager.Instance.gameConstant.StaminaExploreCost - GameManager.Instance.Get_Stamina());
         }
         else
             TextTip.color = new Color(1, 1, 1, 0);

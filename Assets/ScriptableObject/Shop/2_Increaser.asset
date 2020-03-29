@@ -14,4 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ItemName: "\u64F4\u5145\u7F50"
   ItemDesc: "\u63D0\u9AD8\u80FD\u91CF\u7684\u6700\u5927\u503C"
+  TermName:
+    mTerm: Item/Max
+    mRTL_IgnoreArabicFix: 0
+    mRTL_MaxLineLength: 0
+    mRTL_ConvertNumbers: 0
+    m_DontLocalizeParameters: 0
+  TermDesc:
+    mTerm: Item/Tip_Max
+    mRTL_IgnoreArabicFix: 0
+    mRTL_MaxLineLength: 0
+    mRTL_ConvertNumbers: 0
+    m_DontLocalizeParameters: 0
   CostGold: 100

@@ -17,6 +17,7 @@ public class PlayerData
     
     //System option
     public bool DisableSound;
+    public int languageCode;
 
     public PlayerData(){
         collectList = new List<int>();

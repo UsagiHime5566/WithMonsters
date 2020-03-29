@@ -60,6 +60,10 @@ public partial class GameManager : MonoBehaviour
         playerData.DisableSound = !val;
     }
 
+    public void SetLanguage(SystemLanguage lang){
+        playerData.languageCode = (int)lang;
+    }
+
 #region Get Game Data
 
     public int Get_Explore(){
@@ -84,6 +88,14 @@ public partial class GameManager : MonoBehaviour
 
     public bool Get_DisableSound(){
         return playerData.DisableSound;
+    }
+
+    public SystemLanguage Get_Language(){
+        if(playerData.languageCode == 0){
+            return MyI2Utils.GetDefaultLanguage();
+        }
+
+        return (SystemLanguage)playerData.languageCode;
     }
 #endregion
 }

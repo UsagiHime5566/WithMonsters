@@ -9,6 +9,7 @@ public class MonsterPool : ScriptableObject
     public List<float> probabilitys;
     public List<MonsterUnit> ListPool;
     public List<ParticleSystem> jumpEffects;
+    public List<ParticleSystem> hitEffects;
 
     public MonsterUnit GetRandomUnit(int exploreRate){
         
@@ -61,6 +62,10 @@ public class MonsterPool : ScriptableObject
 
     public ParticleSystem GetRandomEffect(){
         return jumpEffects[Random.Range(0, jumpEffects.Count)];
+    }
+
+    public ParticleSystem GetRandomHit(){
+        return hitEffects[Random.Range(0, hitEffects.Count)];
     }
 
     [System.Serializable]

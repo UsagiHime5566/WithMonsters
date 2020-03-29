@@ -77,3 +77,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5680c1bce0a50e94a844231f7cb3519a, type: 2}
   jumpEffects:
   - {fileID: 19800018, guid: a40b64bf23366dc42a892af2c6ff6140, type: 3}
+  hitEffects:
+  - {fileID: 19800004, guid: 53e826267477584429fb0bc0b64f0961, type: 3}
+  - {fileID: 19800000, guid: 5b6e3f6e03ea62b4e81099febd66bf5f, type: 3}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using I2.Loc;
 
 public class ItemLayout : MonoBehaviour
 {
@@ -17,8 +18,10 @@ public class ItemLayout : MonoBehaviour
         if(data == null)
             return;
 
-        TextName.text = data.ItemName;
-        TextTip.text = data.ItemDesc;
+        //TextName.text = data.TermName.ToString();
+        //TextTip.text = data.TermDesc.ToString();
+        TextName.GetComponent<Localize>().SetTerm(data.TermName.mTerm);
+        TextTip.GetComponent<Localize>().SetTerm(data.TermDesc.mTerm);
         TextGold.text = data.CostGold.ToString();
     }
 }
