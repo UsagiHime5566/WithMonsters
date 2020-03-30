@@ -26,6 +26,7 @@ public class InfoPlistManager : MonoBehaviour
         //rootDict.SetString("NSLocationAlwaysAndWhenInUseUsageDescription", "開啟後，APP中的地圖將定位您的位置，並引導您至此APP中的AR觀看點");
         //rootDict.SetString("NSLocationWhenInUseUsageDescription", "開啟後，APP中的地圖將定位您的位置，並引導您至此APP中的AR觀看點");
         rootDict.SetString("NSCameraUsageDescription", "開啟後，您才能於APP中使用相機來觀看擴增實境(AR)內容");
+        rootDict.SetBoolean("GADIsAdManagerApp",true);
         
         var rootDicVal = rootDict.values;
         rootDicVal.Remove("UIApplicationExitsOnSuspend");
