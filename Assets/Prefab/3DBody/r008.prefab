@@ -722,7 +722,7 @@ MonoBehaviour:
   HandLeft: {fileID: 1322194026}
   FootRight: {fileID: 1297786254}
   FootLeft: {fileID: 1321730339}
-  Cry: {fileID: 6254805278065053408}
+  Cry: {fileID: 0}
   FootRight2: {fileID: 0}
   FootLeft2: {fileID: 0}
 --- !u!65 &6427505457582220001

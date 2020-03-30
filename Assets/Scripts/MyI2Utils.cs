@@ -35,6 +35,8 @@ public static class MyI2Utils {
     public static SystemLanguage GetDefaultLanguage(){
         if(Application.systemLanguage == SystemLanguage.Chinese)
             return SystemLanguage.ChineseTraditional;
+        if(Application.systemLanguage == SystemLanguage.ChineseTraditional)
+            return SystemLanguage.ChineseTraditional;
         
         return SystemLanguage.English;
     }

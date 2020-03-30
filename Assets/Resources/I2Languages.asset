@@ -105,6 +105,14 @@ MonoBehaviour:
       - "\u8CFC\u8CB7"
       Flags: 0000
       Languages_Touch: []
+    - Term: Interface/GetMoreGold
+      TermType: 0
+      Description: 
+      Languages:
+      - Get more gold
+      - "\u7372\u5F97\u66F4\u591A\u91D1\u9322"
+      Flags: 0000
+      Languages_Touch: []
     - Term: Item/Recover
       TermType: 0
       Description: 
@@ -184,7 +192,7 @@ MonoBehaviour:
     Google_WebServiceURL: https://script.google.com/macros/s/AKfycbz2rf8no3A1jc4uW7szIHxy-VhFIivzocp8s0X9/exec
     Google_SpreadsheetKey: 1rC340TRWgmUzBByfb02OkN2cEpr-O2taI8miL_4aOek
     Google_SpreadsheetName: "I2Loc \u8207\u5C0F\u602A\u7378\u5011 Localization"
-    Google_LastUpdatedVersion: 1585517165021
+    Google_LastUpdatedVersion: 1585517754052
     Google_Password: change_this
     GoogleUpdateFrequency: 3
     GoogleInEditorCheckFrequency: 2
