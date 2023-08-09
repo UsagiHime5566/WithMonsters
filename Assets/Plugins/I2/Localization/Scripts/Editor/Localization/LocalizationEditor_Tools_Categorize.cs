@@ -1,6 +1,7 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿using System;
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
 
 namespace I2.Loc
 {
@@ -20,7 +21,7 @@ namespace I2.Loc
 			OnGUI_ScenesList(true);
 			
 			GUI.backgroundColor = Color.Lerp (Color.gray, Color.white, 0.2f);
-			GUILayout.BeginVertical(EditorStyles.textArea, GUILayout.Height(1));
+			GUILayout.BeginVertical(LocalizeInspector.GUIStyle_OldTextArea, GUILayout.Height(1));
 				GUI.backgroundColor = Color.white;
 				GUILayout.Space (5);
 				
@@ -37,9 +38,11 @@ namespace I2.Loc
 		{
 			GUILayout.Label("Change Category of the following Terms:", EditorStyles.toolbarButton, GUILayout.ExpandWidth(true));
 
-			mScrollPos_CategorizedKeys = GUILayout.BeginScrollView( mScrollPos_CategorizedKeys, EditorStyles.textArea, GUILayout.Height ( 100));
+            GUI.backgroundColor = Color.Lerp(GUITools.LightGray, Color.white, 0.5f);
+            mScrollPos_CategorizedKeys = GUILayout.BeginScrollView( mScrollPos_CategorizedKeys, LocalizeInspector.GUIStyle_OldTextArea, GUILayout.Height ( 100));
+            GUI.backgroundColor = Color.white;
 
-    		if (mSelectedKeys.Count==0)
+            if (mSelectedKeys.Count==0)
 			{
 				GUILayout.FlexibleSpace();
 
@@ -67,7 +70,7 @@ namespace I2.Loc
 					GUILayout.BeginHorizontal();
 						OnGUI_CategorizedTerm(mSelectedKeys[i]);
 
-						if (DoubleColumn && (i+HalfCount<mSelectedKeys.Count))
+						if (DoubleColumn && i+HalfCount<mSelectedKeys.Count)
 							OnGUI_CategorizedTerm(mSelectedKeys[i+HalfCount]);
 					GUILayout.EndHorizontal();
 				}
@@ -129,7 +132,7 @@ namespace I2.Loc
 
 		#region Assigning Category
 
-		public static Dictionary<string, string> TermReplacements = null;
+		public static Dictionary<string, string> TermReplacements;
 
 		void AssignCategoryToSelectedTerms()
 		{
@@ -142,7 +145,7 @@ namespace I2.Loc
 			if (mNewCategory==LanguageSourceData.EmptyCategory)
 				mNewCategory = string.Empty;
 
-			TermReplacements = new Dictionary<string, string>(System.StringComparer.Ordinal);
+			TermReplacements = new Dictionary<string, string>(StringComparer.Ordinal);
 			for (int i=mSelectedKeys.Count-1; i>=0; --i)
 			{
 				string sKey, sCategory;
@@ -163,7 +166,7 @@ namespace I2.Loc
 						termData.Term = sKey;
 					else
 						TermReplacements.Remove (OldTerm);
-                    EditorUtility.SetDirty(mLanguageSource.owner);
+                    mLanguageSource.Editor_SetDirty();
 				}
 			}
 			if (TermReplacements.Count<=0)

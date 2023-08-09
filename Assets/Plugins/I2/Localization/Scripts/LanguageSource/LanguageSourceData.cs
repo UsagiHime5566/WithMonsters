@@ -1,22 +1,27 @@
 using System;
-using UnityEngine;
-using System.Linq;
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace I2.Loc
 {
-    [AddComponentMenu("I2/Localization/Source")]
+    public interface ILanguageSource
+    {
+        LanguageSourceData SourceData { get; set; }
+    }
+
     [ExecuteInEditMode]
     [Serializable]
 	public partial class LanguageSourceData
     {
         #region Variables
 
-        [NonSerialized] public Object owner;
+        [NonSerialized] public ILanguageSource owner;
+        public Object ownerObject { get { return owner as Object; } }
 
-		public bool UserAgreesToHaveItOnTheScene = false;
-		public bool UserAgreesToHaveItInsideThePluginsFolder = false;
+        public bool UserAgreesToHaveItOnTheScene;
+		public bool UserAgreesToHaveItInsideThePluginsFolder;
         public bool GoogleLiveSyncIsUptoDate = true;
 
         [NonSerialized] public bool mIsGlobalSource;
@@ -27,12 +32,12 @@ namespace I2.Loc
 
         public List<TermData> mTerms = new List<TermData>();
 
-        public bool CaseInsensitiveTerms = false;
+        public bool CaseInsensitiveTerms;
 
         //This is used to overcome the issue with Unity not serializing Dictionaries
         [NonSerialized] public Dictionary<string, TermData> mDictionary = new Dictionary<string, TermData>(StringComparer.Ordinal);
 
-        public enum MissingTranslationAction { Empty, Fallback, ShowWarning, ShowTerm };
+        public enum MissingTranslationAction { Empty, Fallback, ShowWarning, ShowTerm }
         public MissingTranslationAction OnMissingTranslation = MissingTranslationAction.Fallback;
 
         public string mTerm_AppName;
@@ -46,7 +51,7 @@ namespace I2.Loc
         public bool IgnoreDeviceLanguage; // If false, it will use the Device's language as the initial Language, otherwise it will use the first language in the source.
 
         public enum eAllowUnloadLanguages { Never, OnlyInDevice, EditorAndDevice }
-        public eAllowUnloadLanguages _AllowUnloadingLanguages = eAllowUnloadLanguages.OnlyInDevice;
+        public eAllowUnloadLanguages _AllowUnloadingLanguages = eAllowUnloadLanguages.Never;
 
         #endregion
 
@@ -61,13 +66,17 @@ namespace I2.Loc
         public string Google_Password = "change_this";
 #endif
 
-        public enum eGoogleUpdateFrequency { Always, Never, Daily, Weekly, Monthly, OnlyOnce }
+        public enum eGoogleUpdateFrequency { Always, Never, Daily, Weekly, Monthly, OnlyOnce, EveryOtherDay }
         public eGoogleUpdateFrequency GoogleUpdateFrequency = eGoogleUpdateFrequency.Weekly;
         public eGoogleUpdateFrequency GoogleInEditorCheckFrequency = eGoogleUpdateFrequency.Daily;
 
-        public float GoogleUpdateDelay = 5; // How many second to delay downloading data from google (to avoid lag on the startup)
+        // When Manual, the user has to call LocalizationManager.ApplyDownloadedDataFromGoogle() during a loading screen or similar
+        public enum eGoogleUpdateSynchronization { Manual, OnSceneLoaded, AsSoonAsDownloaded }
+        public eGoogleUpdateSynchronization GoogleUpdateSynchronization = eGoogleUpdateSynchronization.OnSceneLoaded;
 
-        public event Action<LanguageSourceData, bool, string> Event_OnSourceUpdateFromGoogle;    // (LanguageSource, bool ReceivedNewData, string errorMsg)
+        public float GoogleUpdateDelay; // How many second to delay downloading data from google (to avoid lag on the startup)
+
+        public event LanguageSource.fnOnSourceUpdated Event_OnSourceUpdateFromGoogle;    // (LanguageSource, bool ReceivedNewData, string errorMsg)
 
         #endregion
 
@@ -87,6 +96,7 @@ namespace I2.Loc
 		public string Spreadsheet_LocalCSVSeparator = ",";
         public string Spreadsheet_LocalCSVEncoding = "utf-8";
         public bool Spreadsheet_SpecializationAsRows = true;
+        public bool Spreadsheet_SortRows = true;
 
 #endif
         #endregion
@@ -131,7 +141,7 @@ namespace I2.Loc
 		{
 			for (int i=0, imax=LocalizationManager.Sources.Count; i<imax; ++i)
 			{
-				LanguageSourceData source = (LocalizationManager.Sources[i] as LanguageSourceData);
+				LanguageSourceData source = LocalizationManager.Sources[i];
 				if (source!=null && source.IsEqualTo(this) && source!=this)
 					return true;
 			}
@@ -151,6 +161,17 @@ namespace I2.Loc
             return mIsGlobalSource;
         }
 
-		#endregion
-	}
+        #endregion
+
+        public void Editor_SetDirty()
+        {
+            #if UNITY_EDITOR
+                if (ownerObject != null)
+                {
+                    EditorUtility.SetDirty(ownerObject);
+                }
+            #endif
+        }
+
+    }
 }

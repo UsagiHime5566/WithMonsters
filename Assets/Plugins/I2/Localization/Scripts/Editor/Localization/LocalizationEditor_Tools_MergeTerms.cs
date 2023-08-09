@@ -1,6 +1,7 @@
-using UnityEngine;
-using UnityEditor;
+using System;
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
 
 namespace I2.Loc
 {
@@ -17,7 +18,7 @@ namespace I2.Loc
 			OnGUI_ScenesList(true);
 			
 			GUI.backgroundColor = Color.Lerp (Color.gray, Color.white, 0.2f);
-			GUILayout.BeginVertical(EditorStyles.textArea, GUILayout.Height(1));
+			GUILayout.BeginVertical(LocalizeInspector.GUIStyle_OldTextArea, GUILayout.Height(1));
 			GUI.backgroundColor = Color.white;
 			GUILayout.Space (5);
 			
@@ -36,7 +37,7 @@ namespace I2.Loc
 				mKeyToExplore = string.Empty;
 
 			GUI.backgroundColor = Color.Lerp (Color.gray, Color.white, 0.2f);
-			GUILayout.BeginVertical(EditorStyles.textArea, GUILayout.Height(1));
+			GUILayout.BeginVertical(LocalizeInspector.GUIStyle_OldTextArea, GUILayout.Height(1));
 			GUI.backgroundColor = Color.white;
 				GUILayout.Space(5);
 				GUILayout.Label("Replace By:");
@@ -108,12 +109,12 @@ namespace I2.Loc
 				{
 					termData.TermType 		= oldTerm.TermType;
 					termData.Description	= oldTerm.Description;
-					System.Array.Copy(oldTerm.Languages, termData.Languages, oldTerm.Languages.Length);
+					Array.Copy(oldTerm.Languages, termData.Languages, oldTerm.Languages.Length);
 				}
 			}
 
 			//--[ Delete the selected Terms from the source ]-----------------
-            TermReplacements = new Dictionary<string, string>(System.StringComparer.Ordinal);
+            TermReplacements = new Dictionary<string, string>(StringComparer.Ordinal);
 			for (int i=mSelectedKeys.Count-1; i>=0; --i)
 			{
 				string OldTerm = mSelectedKeys[i];

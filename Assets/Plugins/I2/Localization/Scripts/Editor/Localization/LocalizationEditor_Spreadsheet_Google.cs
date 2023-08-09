@@ -1,7 +1,9 @@
-﻿using UnityEngine;
-using UnityEditor;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Text;
+using I2.Loc.SimpleJSON;
+using UnityEditor;
+using UnityEngine;
 using UnityEngine.Networking;
 
 namespace I2.Loc
@@ -13,7 +15,9 @@ namespace I2.Loc
 		public static Dictionary<string, string> mGoogleSpreadsheets = new Dictionary<string, string>(StringComparer.Ordinal);
 
 		public UnityWebRequest mConnection_WWW;
-		Action<string, string> mConnection_Callback;
+
+        delegate void fnConnectionCallback(string Result, string Error);
+        event fnConnectionCallback mConnection_Callback;
 		//float mConnection_TimeOut;
 
 		string mConnection_Text = string.Empty;
@@ -33,9 +37,10 @@ namespace I2.Loc
 			EditorGUILayout.HelpBox("Google Synchronization is not supported when in WebPlayer mode." + mConnection_Text, MessageType.Info);
 
 			mProp_GoogleUpdateFrequency.enumValueIndex = mProp_GoogleUpdateFrequency.enumValueIndex;  // to avoid the warning "unused"
+            mProp_GoogleUpdateSynchronization.enumValueIndex = mProp_GoogleUpdateSynchronization.enumValueIndex;
 #else
-			
-			OnGUI_GoogleCredentials();
+
+            OnGUI_GoogleCredentials();
 			
 			OnGUI_ShowMsg();
 
@@ -48,7 +53,7 @@ namespace I2.Loc
 			GUILayout.Space(20);
 
 			GUI.backgroundColor = Color.Lerp(Color.gray, Color.white, 0.5f);
-			GUILayout.BeginVertical(EditorStyles.textArea, GUILayout.Height (1));
+			GUILayout.BeginVertical(LocalizeInspector.GUIStyle_OldTextArea, GUILayout.Height (1));
 			GUI.backgroundColor = Color.white;
 				GUILayout.Space(10);
 
@@ -63,10 +68,10 @@ namespace I2.Loc
 			if (mConnection_WWW!=null)
 			{
 				// Connection Status Bar
-				int time = (int)((Time.realtimeSinceStartup % 2) * 2.5);
+				int time = (int)(Time.realtimeSinceStartup % 2 * 2.5);
 				string Loading = mConnection_Text + ".....".Substring(0, time);
 				GUI.color = Color.gray;
-				GUILayout.BeginHorizontal(EditorStyles.textArea);
+				GUILayout.BeginHorizontal(LocalizeInspector.GUIStyle_OldTextArea);
 				GUILayout.Label (Loading, EditorStyles.miniLabel);
 				GUI.color = Color.white;
 				if (GUILayout.Button("Cancel", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false)))
@@ -78,14 +83,16 @@ namespace I2.Loc
 			//	GUILayout.Space(10);
 
 
-			GUI.changed = false;
+			EditorGUI.BeginChangeCheck();
 			GUILayout.Space(5);
 			GUILayout.BeginHorizontal();
 				GUILayout.FlexibleSpace();
 					LanguageSourceData.eGoogleUpdateFrequency GoogleUpdateFrequency = (LanguageSourceData.eGoogleUpdateFrequency)mProp_GoogleUpdateFrequency.enumValueIndex;
-					GoogleUpdateFrequency = (LanguageSourceData.eGoogleUpdateFrequency)EditorGUILayout.EnumPopup("Auto Update Frequency", GoogleUpdateFrequency, GUILayout.ExpandWidth(true));
-					if (GUI.changed)
-					mProp_GoogleUpdateFrequency.enumValueIndex = (int)GoogleUpdateFrequency;
+                    GoogleUpdateFrequency = (LanguageSourceData.eGoogleUpdateFrequency)EditorGUILayout.EnumPopup("Auto Update Frequency", GoogleUpdateFrequency, GUILayout.ExpandWidth(true));
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        mProp_GoogleUpdateFrequency.enumValueIndex = (int)GoogleUpdateFrequency;
+                    }
 
 					GUILayout.Space(10);
 					GUILayout.Label("Delay:");
@@ -94,7 +101,7 @@ namespace I2.Loc
 
 			GUILayout.EndHorizontal();
 
-			GUILayout.BeginHorizontal();
+            GUILayout.BeginHorizontal();
 				GUILayout.FlexibleSpace();
 					var GoogleInEditorCheckFrequency = (LanguageSourceData.eGoogleUpdateFrequency)mProp_GoogleInEditorCheckFrequency.enumValueIndex;
                     EditorGUI.BeginChangeCheck();
@@ -105,6 +112,18 @@ namespace I2.Loc
                     }
 					GUILayout.Space(122);
 			GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+                GUILayout.FlexibleSpace();
+                GUILayout.Label("Update Synchronization", GUILayout.Width(180));
+                EditorGUI.BeginChangeCheck();
+                LanguageSourceData.eGoogleUpdateSynchronization GoogleUpdateSynchronization = (LanguageSourceData.eGoogleUpdateSynchronization)mProp_GoogleUpdateSynchronization.enumValueIndex;
+                GoogleUpdateSynchronization = (LanguageSourceData.eGoogleUpdateSynchronization)EditorGUILayout.EnumPopup(GoogleUpdateSynchronization, GUILayout.Width(178));
+                if (EditorGUI.EndChangeCheck())
+                {
+                    mProp_GoogleUpdateSynchronization.enumValueIndex = (int)GoogleUpdateSynchronization;
+                }
+            GUILayout.EndHorizontal();
 
 			GUILayout.Space(5);
 
@@ -224,13 +243,13 @@ namespace I2.Loc
 			string[] SpreadsheetsKey;
 			if (mGoogleSpreadsheets.Count>0 || string.IsNullOrEmpty(mProp_Google_SpreadsheetKey.stringValue))
 			{
-				Spreadsheets = (new List<string>(mGoogleSpreadsheets.Keys)).ToArray();
-				SpreadsheetsKey = (new List<string>(mGoogleSpreadsheets.Values)).ToArray();
+				Spreadsheets = new List<string>(mGoogleSpreadsheets.Keys).ToArray();
+				SpreadsheetsKey = new List<string>(mGoogleSpreadsheets.Values).ToArray();
 			}
 			else
 			{
-				Spreadsheets = new string[]{mProp_Google_SpreadsheetName.stringValue ?? string.Empty};
-				SpreadsheetsKey = new string[]{mProp_Google_SpreadsheetKey.stringValue ?? string.Empty};
+				Spreadsheets = new[]{mProp_Google_SpreadsheetName.stringValue ?? string.Empty};
+				SpreadsheetsKey = new[]{mProp_Google_SpreadsheetKey.stringValue ?? string.Empty};
 			}
 			int mSpreadsheetIndex = Array.IndexOf(SpreadsheetsKey, mProp_Google_SpreadsheetKey.stringValue);
 
@@ -240,7 +259,7 @@ namespace I2.Loc
 				GUILayout.Label ("In Google Drive:", GUILayout.Width(100));
 
 				GUI.changed = false;
-				GUI.enabled = (Spreadsheets != null && Spreadsheets.Length>0);
+				GUI.enabled = Spreadsheets != null && Spreadsheets.Length>0;
 				mSpreadsheetIndex = EditorGUILayout.Popup(mSpreadsheetIndex, Spreadsheets, EditorStyles.toolbarPopup);
 				if (GUI.changed && mSpreadsheetIndex >= 0)
 				{
@@ -287,47 +306,76 @@ namespace I2.Loc
 		}
 
 
-		void OnGUI_GoogleButtons_ImportExport( string SpreadsheetKey )
+        private void OnGUI_ImportButtons()
+        {
+            eSpreadsheetUpdateMode Mode = SynchronizationButtons("Import");
+            if (Mode != eSpreadsheetUpdateMode.None || InTestAction(eTest_ActionType.Button_GoogleSpreadsheet_Import))
+            {
+                if (mTestAction == eTest_ActionType.Button_GoogleSpreadsheet_Import)
+                    Mode = (eSpreadsheetUpdateMode)mTestActionArg;
+
+                serializedObject.ApplyModifiedProperties();
+
+                var modeCopy = Mode;
+                GUITools.DelayedCall(() => Import_Google(modeCopy));
+            }
+        }
+
+        private void OnGUI_ExportButtons()
+        {
+            eSpreadsheetUpdateMode Mode = SynchronizationButtons("Export");
+            if (Mode != eSpreadsheetUpdateMode.None || InTestAction(eTest_ActionType.Button_GoogleSpreadsheet_Export))
+            {
+                if (mTestAction == eTest_ActionType.Button_GoogleSpreadsheet_Export)
+                    Mode = (eSpreadsheetUpdateMode)mTestActionArg;
+
+                serializedObject.ApplyModifiedProperties();
+
+                var modeCopy = Mode;
+                GUITools.DelayedCall(() => Export_Google(modeCopy));
+            }
+        }
+
+        void OnGUI_GoogleButtons_ImportExport( string SpreadsheetKey )
 		{
 			GUI.enabled = !string.IsNullOrEmpty(SpreadsheetKey) && mConnection_WWW==null;
 
-			GUILayout.BeginHorizontal();
-				GUILayout.Space(10);
+            bool vertical = EditorGUIUtility.currentViewWidth < 450;
 
-				eSpreadsheetUpdateMode Mode = SynchronizationButtons("Import");
-				if ( Mode!= eSpreadsheetUpdateMode.None || InTestAction(eTest_ActionType.Button_GoogleSpreadsheet_Import))
-				{
-                    if (mTestAction == eTest_ActionType.Button_GoogleSpreadsheet_Import)
-                        Mode = (eSpreadsheetUpdateMode)mTestActionArg;
+            if (vertical)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.FlexibleSpace();
+                OnGUI_ImportButtons();
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
 
-                    serializedObject.ApplyModifiedProperties();
+                GUILayout.BeginHorizontal();
+                GUILayout.FlexibleSpace();
+                OnGUI_ExportButtons();
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
+            }
+            else
+            {
+                GUILayout.BeginHorizontal();
+                    GUILayout.FlexibleSpace();
+                    OnGUI_ImportButtons();
+                    GUILayout.FlexibleSpace();
+                    OnGUI_ExportButtons();
+                    GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
+            }
 
-                    var modeCopy = Mode;                
-                    GUITools.DelayedCall(() => Import_Google(modeCopy));
-				}
-
-				GUILayout.FlexibleSpace();
-
-				Mode = SynchronizationButtons("Export");
-				if ( Mode != eSpreadsheetUpdateMode.None || InTestAction(eTest_ActionType.Button_GoogleSpreadsheet_Export))
-				{
-                    if (mTestAction == eTest_ActionType.Button_GoogleSpreadsheet_Export)
-                        Mode = (eSpreadsheetUpdateMode)mTestActionArg;
-
-                    serializedObject.ApplyModifiedProperties();
-
-                    var modeCopy = Mode;
-                    GUITools.DelayedCall( ()=>Export_Google(modeCopy) );
-                }
-
-            GUILayout.Space(10);
-			GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
                 GUILayout.FlexibleSpace();
+                GUILayout.BeginVertical();
                 EditorGUIUtility.labelWidth += 10;
                 EditorGUILayout.PropertyField(mProp_Spreadsheet_SpecializationAsRows, new GUIContent("Show Specializations as Rows", "true: Make each specialization a separate row (e.g. Term[VR]..., Term[Touch]....\nfalse: Merge specializations into same cell separated by [i2s_XXX]"));
+                EditorGUILayout.PropertyField(mProp_Spreadsheet_SortRows, new GUIContent("Sort Rows", "true: Sort each term by its name....\nfalse: Keep the terms order"));
                 EditorGUIUtility.labelWidth -= 10;
+                GUILayout.EndVertical();
             GUILayout.EndHorizontal();
             GUILayout.Space(10);
 
@@ -338,7 +386,7 @@ namespace I2.Loc
 		eSpreadsheetUpdateMode SynchronizationButtons( string Operation, bool ForceReplace = false )
 		{
 			eSpreadsheetUpdateMode Result = eSpreadsheetUpdateMode.None;
-			GUILayout.BeginVertical(EditorStyles.textArea, GUILayout.Width (1));
+			GUILayout.BeginVertical(LocalizeInspector.GUIStyle_OldTextArea, GUILayout.Width (1));
 			GUI.backgroundColor = Color.white;
 
 				GUILayout.BeginHorizontal();
@@ -398,7 +446,7 @@ namespace I2.Loc
 
             try
             {
-                var data = SimpleJSON.JSON.Parse(Result).AsObject;
+                var data = JSON.Parse(Result).AsObject;
 				int version = 0;
 				if (!int.TryParse(data["script_version"], out version))
 					version = 0;
@@ -523,30 +571,30 @@ namespace I2.Loc
 		{
 			if (mConnection_WWW!=null && mConnection_WWW.isDone)
 			{
-				Action<string, string> callback = mConnection_Callback;
+				fnConnectionCallback callback = mConnection_Callback;
 				string Result = string.Empty;
 				string Error = mConnection_WWW.error;
 
 				if (string.IsNullOrEmpty(Error))
 				{
-					Result = System.Text.Encoding.UTF8.GetString(mConnection_WWW.downloadHandler.data); //mConnection_WWW.text;
+					Result = Encoding.UTF8.GetString(mConnection_WWW.downloadHandler.data); //mConnection_WWW.text;
 				}
 
 				StopConnectionWWW();
 				if (callback!=null)
 					callback(Result, Error);
 			}
-			/*else
+            /*else
 			if (Time.realtimeSinceStartup > mConnection_TimeOut+30)
 			{
-				Action<string, string> callback = mConnection_Callback;
+				fnConnectionCallback callback = mConnection_Callback;
 				StopConnectionWWW();
 				if (callback!=null)
 					callback(string.Empty, "Time Out");
 			}*/
-		}
+        }
 
-		void StopConnectionWWW()
+        void StopConnectionWWW()
 		{
 			EditorApplication.update -= CheckForConnection;				
 			mConnection_WWW = null;
@@ -569,7 +617,7 @@ namespace I2.Loc
             if (source.IsGlobalSource())
 				SpreadsheetName = string.Format("{0} Localization", PlayerSettings.productName);
 			else
-				SpreadsheetName = string.Format("{0} {1} {2}", PlayerSettings.productName, Editor_GetCurrentScene(), source.owner.name);
+				SpreadsheetName = string.Format("{0} {1} {2}", PlayerSettings.productName, Editor_GetCurrentScene(), source.ownerObject.name);
 
 			string query =  mProp_Google_WebServiceURL.stringValue + "?action=NewSpreadsheet&name=" + Uri.EscapeDataString(SpreadsheetName) + "&password="+ Uri.EscapeDataString(mProp_Google_Password.stringValue);
 
@@ -597,7 +645,7 @@ namespace I2.Loc
 
             try
             {
-				var data = SimpleJSON.JSON.Parse(Result).AsObject;
+				var data = JSON.Parse(Result).AsObject;
 
 				string name = data["name"];
 				string key = data["id"];
@@ -656,8 +704,8 @@ namespace I2.Loc
             try
 			{
 				mGoogleSpreadsheets.Clear();
-				var data = SimpleJSON.JSON.Parse(Result).AsObject;
-				foreach (KeyValuePair<string, SimpleJSON.JSONNode> element in data)
+				var data = JSON.Parse(Result).AsObject;
+				foreach (KeyValuePair<string, JSONNode> element in data)
 					mGoogleSpreadsheets[element.Key] = element.Value;
 			}
 			catch(Exception e)

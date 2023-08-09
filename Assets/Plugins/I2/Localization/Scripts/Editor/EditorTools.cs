@@ -1,8 +1,12 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Linq;
+using System.Reflection;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace I2.Loc
 {	
@@ -42,8 +46,8 @@ namespace I2.Loc
         #endregion
 
         #region Header
-
-        static public bool DrawHeader (string text, string key, bool ShowToggle=false, bool ToggleState=false, System.Action<bool> OnToggle= null, string HelpURL=default(string), Color disabledColor = default(Color))
+        public delegate void fnOnToggled(bool enabled);
+        static public bool DrawHeader (string text, string key, bool ShowToggle=false, bool ToggleState=false, fnOnToggled OnToggle = null, string HelpURL=default(string), Color disabledColor = default(Color))
 		{
 			bool state = EditorPrefs.GetBool(key, false);
 
@@ -53,15 +57,15 @@ namespace I2.Loc
 			return newState;
 		}
 
-		static public bool DrawHeader (string text, bool state, bool ShowToggle=false, bool ToggleState=false, System.Action<bool> OnToggle= null, string HelpURL=default(string), Color disabledColor = default(Color), bool allowCollapsing = true)
+		static public bool DrawHeader (string text, bool state, bool ShowToggle=false, bool ToggleState=false, fnOnToggled OnToggle = null, string HelpURL=default(string), Color disabledColor = default(Color), bool allowCollapsing = true)
 		{
 			GUIStyle Style = new GUIStyle(EditorStyles.foldout);
 			Style.richText = true;
 			EditorStyles.foldout.richText = true;
 			if (state)
 			{
-				GUI.backgroundColor=DarkGray;
-				GUILayout.BeginVertical(EditorStyles.textArea, GUILayout.Height(1));
+				//GUI.backgroundColor=DarkGray;
+				GUILayout.BeginVertical(LocalizeInspector.GUIStyle_OldTextArea/*, GUILayout.Height(1)*/);
 				GUILayout.BeginHorizontal();
                 if (!string.IsNullOrEmpty(text))
                 {
@@ -86,7 +90,7 @@ namespace I2.Loc
 				GUILayout.EndHorizontal();
 				GUILayout.Space(2);
 				
-				GUI.backgroundColor = Color.white;
+				//GUI.backgroundColor = Color.white;
 			}
 			else
 			{
@@ -104,7 +108,7 @@ namespace I2.Loc
 						OnToggle(newBool);
 				}
 				GUILayout.EndHorizontal();
-				GUI.color = GUITools.White;
+				GUI.color = White;
 			}
 			return state;
 		}
@@ -156,7 +160,7 @@ namespace I2.Loc
 	
 		static public void BeginContents ()
 		{
-			EditorGUILayout.BeginHorizontal(EditorStyles.textArea, GUILayout.MinHeight(10f));
+			EditorGUILayout.BeginHorizontal(LocalizeInspector.GUIStyle_OldTextArea, GUILayout.MinHeight(10f));
 			GUILayout.Space(2f);
 			EditorGUILayout.BeginVertical();
 			GUILayout.Space(2f);
@@ -230,7 +234,7 @@ namespace I2.Loc
 		static public int DrawShadowedTabs( int Index, string[] Tabs, int height = 25, bool expand=true )
 		{
 			GUI.backgroundColor=Color.Lerp (Color.gray, Color.white, 0.2f);
-			GUILayout.BeginVertical(EditorStyles.textArea, GUILayout.Height(1));
+			GUILayout.BeginVertical(LocalizeInspector.GUIStyle_OldTextArea, GUILayout.Height(1));
 				GUI.backgroundColor=Color.white;
 				GUILayout.Space(2);
 				Index = DrawTabs( Index, Tabs, height: height, expand:expand );
@@ -246,7 +250,7 @@ namespace I2.Loc
 			//width = Mathf.Max (width, height * Tabs[0].width/(float)Tabs[0].height);
 
 			GUILayout.BeginHorizontal();
-			float width = (Screen.width-(MyStyle.border.left+MyStyle.border.right)*(Tabs.Length-1)) / (float)Tabs.Length;
+			float width = (EditorGUIUtility.currentViewWidth-(MyStyle.border.left+MyStyle.border.right)*(Tabs.Length-1)) / Tabs.Length;
 			for (int i=0; i<Tabs.Length; ++i)
 			{
 				if ( GUILayout.Toggle(Index==i, Tabs[i], MyStyle, GUILayout.Height(height), GUILayout.Width(width)) && Index!=i) 
@@ -554,7 +558,7 @@ namespace I2.Loc
 			
 			float delta;
 			if (min != max)
-				delta = ((max - min) / 360);
+				delta = (max - min) / 360;
 			else
 				delta = 1;
 			
@@ -576,7 +580,7 @@ namespace I2.Loc
 					{
 						float mod = value % snap;
 						
-						if (mod < (delta * 3) || Mathf.Abs(mod - snap) < (delta * 3))
+						if (mod < delta * 3 || Mathf.Abs(mod - snap) < delta * 3)
 							value = Mathf.Round(value / snap) * snap;
 					}
 					
@@ -598,7 +602,7 @@ namespace I2.Loc
 			if (pAngle_TextureCircle) GUI.DrawTexture(knobRect, pAngle_TextureCircle);
 			GUI.matrix = matrix;
 			
-			Rect label = new Rect(rect.x + rect.height, rect.y + (rect.height / 2) - 9, rect.height, 18);
+			Rect label = new Rect(rect.x + rect.height, rect.y + rect.height / 2 - 9, rect.height, 18);
 			value = EditorGUI.FloatField(label, value);
 			
 			if (min != max)
@@ -613,7 +617,7 @@ namespace I2.Loc
 			
 			float delta;
 			if (min != max)
-				delta = ((max - min) / 360);
+				delta = (max - min) / 360;
 			else
 				delta = 1;
 
@@ -627,7 +631,7 @@ namespace I2.Loc
 				{
 					float mod = Mathf.Repeat(angle, snap);
 					
-					if (mod < (delta * 3) || Mathf.Abs(mod - snap) < (delta * 3))
+					if (mod < delta * 3 || Mathf.Abs(mod - snap) < delta * 3)
 						angle = Mathf.Round(angle / snap) * snap;
 				}
 				
@@ -665,14 +669,14 @@ namespace I2.Loc
 			#if UNITY_4_6 || UNITY_4_7 || UNITY_4_8 || UNITY_4_9 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2
 				return EditorApplication.currentScene;
 			#else
-				return UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene().path;
+				return SceneManager.GetActiveScene().path;
 			#endif
 		}
 
         public static void Editor_MarkSceneDirty()
         {
             #if UNITY_5_3 || UNITY_5_3_OR_NEWER
-                UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+                EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
             #else
                 EditorApplication.MarkSceneDirty();
             #endif
@@ -683,7 +687,7 @@ namespace I2.Loc
 			#if UNITY_4_6 || UNITY_4_7 || UNITY_4_8 || UNITY_4_9 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2
 			EditorApplication.SaveScene ();
 			#else
-			UnityEditor.SceneManagement.EditorSceneManager.SaveOpenScenes();
+			EditorSceneManager.SaveOpenScenes();
 			#endif
 		}
 
@@ -692,7 +696,7 @@ namespace I2.Loc
 			#if UNITY_4_6 || UNITY_4_7 || UNITY_4_8 || UNITY_4_9 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2
 			EditorApplication.OpenScene( sceneName );
 			#else
-			UnityEditor.SceneManagement.EditorSceneManager.OpenScene(sceneName);
+			EditorSceneManager.OpenScene(sceneName);
 			#endif
 		}
 
@@ -706,7 +710,7 @@ namespace I2.Loc
 			if (mi == null) return null;
 			return mi.Invoke( instanceObject, p_args );
 		}
-		static public object Reflection_InvokeMethod ( System.Type targetType, string methodName, params object[] p_args )
+		static public object Reflection_InvokeMethod ( Type targetType, string methodName, params object[] p_args )
 		{
 			BindingFlags _flags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static;
 			MethodInfo mi = targetType.GetMethods( _flags ).Where( x => x.Name==methodName ).FirstOrDefault();

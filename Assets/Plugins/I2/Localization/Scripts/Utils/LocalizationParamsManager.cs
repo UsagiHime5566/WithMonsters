@@ -1,6 +1,6 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace I2.Loc
 {
@@ -21,7 +21,7 @@ namespace I2.Loc
         [SerializeField]
         public List<ParamValue> _Params = new List<ParamValue>();
 
-        //public bool _AutoRegister = false;
+        public bool _IsGlobalManager;
         
         public string GetParameterValue( string ParamName )
         {
@@ -47,7 +47,7 @@ namespace I2.Loc
                     break;
                 }
             if (!setted)
-                _Params.Add(new ParamValue(){ Name = ParamName, Value = ParamValue });
+                _Params.Add(new ParamValue { Name = ParamName, Value = ParamValue });
         
 			if (localize)
 				OnLocalize();
@@ -62,7 +62,7 @@ namespace I2.Loc
 
         public virtual void OnEnable()
         {
-            //if (_AutoRegister)
+            if (_IsGlobalManager)
                 DoAutoRegister();
         }
 

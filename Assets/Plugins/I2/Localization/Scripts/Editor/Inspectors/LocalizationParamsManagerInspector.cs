@@ -8,8 +8,10 @@ namespace I2.Loc
 	public class LocalizationParamsManagerInspector : Editor
 	{
 		private ReorderableList mList;
+        private SerializedProperty mProp_IsGlobalManager;
 
-		private ReorderableList getList(SerializedObject serObject)
+
+        private ReorderableList getList(SerializedObject serObject)
 		{
 			if (mList == null) {
                 mList = new ReorderableList (serObject, serObject.FindProperty ("_Params"), true, true, true, true);
@@ -28,7 +30,7 @@ namespace I2.Loc
         private void addElementCallback( ReorderableList list )
         {
             serializedObject.ApplyModifiedProperties();
-            var objParams = (target as LocalizationParamsManager);
+            var objParams = target as LocalizationParamsManager;
             objParams._Params.Add(new LocalizationParamsManager.ParamValue());
             list.index = objParams._Params.Count - 1;
             serializedObject.Update();
@@ -39,7 +41,7 @@ namespace I2.Loc
             if (list.index < 0)
                 return;
             serializedObject.ApplyModifiedProperties();
-            var objParams = (target as LocalizationParamsManager);
+            var objParams = target as LocalizationParamsManager;
             objParams._Params.RemoveAt(list.index);
             serializedObject.Update();
         }
@@ -70,6 +72,7 @@ namespace I2.Loc
         void OnEnable()
         {
             mList = getList(serializedObject);
+            mProp_IsGlobalManager = serializedObject.FindProperty("_IsGlobalManager");
         }
         public override void OnInspectorGUI()
 		{
@@ -87,6 +90,9 @@ namespace I2.Loc
             {
                 Application.OpenURL(LocalizeInspector.HelpURL_Documentation);
             }
+
+            GUILayout.Space(5);
+            mProp_IsGlobalManager.boolValue = EditorGUILayout.Popup(new GUIContent("Manager Type", "Local Manager only apply parameters to the Localize component in the same GameObject\n\nGlobal Manager apply parameters to all Localize components"), mProp_IsGlobalManager.boolValue ? 1 : 0, new[] { new GUIContent("Local"), new GUIContent("Global") }) == 1;
 
 
             GUILayout.Space(5);

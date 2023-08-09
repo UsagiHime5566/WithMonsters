@@ -1,8 +1,7 @@
 using System;
-using UnityEngine;
-using System.Linq;
 using System.Collections.Generic;
-using Object = UnityEngine.Object;
+using System.Linq;
+using UnityEngine;
 
 namespace I2.Loc
 {
@@ -43,7 +42,7 @@ namespace I2.Loc
         public LanguageData GetLanguageData(string language, bool AllowDiscartingRegion = true)
         {
             int idx = GetLanguageIndex(language, AllowDiscartingRegion, false);
-            return (idx < 0) ? null : mLanguages[idx];
+            return idx < 0 ? null : mLanguages[idx];
         }
 
         // TODO: Fix IsCurrentLanguage when current=English  and there are two variants in the source (English Canada, English US)
@@ -103,7 +102,7 @@ namespace I2.Loc
 		{
 			Language1 = GetLanguageWithoutRegion(Language1);
 			Language2 = GetLanguageWithoutRegion(Language2);
-			return (string.Compare(Language1, Language2, StringComparison.OrdinalIgnoreCase)==0);
+			return string.Compare(Language1, Language2, StringComparison.OrdinalIgnoreCase)==0;
 		}
 
 		public static string GetLanguageWithoutRegion(string Language)
@@ -111,8 +110,7 @@ namespace I2.Loc
 			int Index = Language.IndexOfAny("(/\\[,{".ToCharArray());
 			if (Index<0)
 				return Language;
-			else
-				return Language.Substring(0, Index).Trim();
+			return Language.Substring(0, Index).Trim();
 		}
 
         public void AddLanguage(string LanguageName)
@@ -136,10 +134,8 @@ namespace I2.Loc
 				Array.Resize(ref mTerms[i].Languages, NewSize);
 				Array.Resize(ref mTerms[i].Flags, NewSize);
 			}
-			#if UNITY_EDITOR
-				UnityEditor.EditorUtility.SetDirty(this.owner);
-			#endif
-		}
+            Editor_SetDirty();
+        }
 
 		public void RemoveLanguage( string LanguageName )
 		{
@@ -159,10 +155,9 @@ namespace I2.Loc
 				Array.Resize(ref mTerms[i].Flags, nLanguages-1);
 			}
 			mLanguages.RemoveAt(LangIndex);
-			#if UNITY_EDITOR
-				UnityEditor.EditorUtility.SetDirty(this.owner);
-			#endif
-		}
+            Editor_SetDirty();
+
+        }
 
 		public List<string> GetLanguages( bool skipDisabled = true)
 		{
@@ -202,7 +197,7 @@ namespace I2.Loc
 
         public void EnableLanguage(string Language, bool bEnabled)
         {
-            int idx = GetLanguageIndex(Language, false);
+            int idx = GetLanguageIndex(Language, false, false);
             if (idx >= 0)
                 mLanguages[idx].SetEnabled(bEnabled);
         }
@@ -303,6 +298,11 @@ namespace I2.Loc
 
             for (int i = 0; i < mLanguages.Count; ++i)
             {
+	            if (string.IsNullOrEmpty(mLanguages[i].Name))
+	            {
+		            Debug.LogError($"Language {i} has no name, please assign a name to the language or it may not show on a build");
+		            continue;
+	            }
                 var data = Export_Language_to_Cache(i, IsCurrentLanguage(i));
                 if (string.IsNullOrEmpty(data))
                     continue;

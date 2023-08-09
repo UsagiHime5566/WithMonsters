@@ -1,15 +1,18 @@
-using System;
-using UnityEngine;
-using System.Linq;
 using System.Collections.Generic;
-using Object = UnityEngine.Object;
+using UnityEditor;
+using UnityEngine;
 
 namespace I2.Loc
 {
     [AddComponentMenu("I2/Localization/Source")]
     [ExecuteInEditMode]
-	public class LanguageSource : MonoBehaviour, ISerializationCallbackReceiver
+	public class LanguageSource : MonoBehaviour, ISerializationCallbackReceiver, ILanguageSource
     {
+        public LanguageSourceData SourceData
+        {
+            get { return mSource; }
+            set { mSource = value; }
+        }
         public LanguageSourceData mSource = new LanguageSourceData();
 
         // Because of Unity2018.3 change in Prefabs, now all the source variables are moved into LanguageSourceData
@@ -19,11 +22,11 @@ namespace I2.Loc
 
         // TODO: also copy         public string name;   and owner
 
-        public int version = 0;
-        public bool NeverDestroy = false;  	// Keep between scenes (will call DontDestroyOnLoad )
+        public int version;
+        public bool NeverDestroy;  	// Keep between scenes (will call DontDestroyOnLoad )
 
-		public bool UserAgreesToHaveItOnTheScene = false;
-		public bool UserAgreesToHaveItInsideThePluginsFolder = false;
+		public bool UserAgreesToHaveItOnTheScene;
+		public bool UserAgreesToHaveItInsideThePluginsFolder;
         public bool GoogleLiveSyncIsUptoDate = true;
 
         public List<Object> Assets = new List<Object>();	// References to Fonts, Atlasses and other objects the localization may need
@@ -38,17 +41,18 @@ namespace I2.Loc
 
         public float GoogleUpdateDelay = 5; // How many second to delay downloading data from google (to avoid lag on the startup)
 
-        public event Action<LanguageSourceData, bool, string> Event_OnSourceUpdateFromGoogle;    // (LanguageSource, bool ReceivedNewData, string errorMsg)
+        public delegate void fnOnSourceUpdated(LanguageSourceData source, bool ReceivedNewData, string errorMsg);
+        public event fnOnSourceUpdated Event_OnSourceUpdateFromGoogle;
 
         public List<LanguageData> mLanguages = new List<LanguageData>();
 
         public bool IgnoreDeviceLanguage; // If false, it will use the Device's language as the initial Language, otherwise it will use the first language in the source.
 
-        public LanguageSourceData.eAllowUnloadLanguages _AllowUnloadingLanguages = LanguageSourceData.eAllowUnloadLanguages.OnlyInDevice;
+        public LanguageSourceData.eAllowUnloadLanguages _AllowUnloadingLanguages = LanguageSourceData.eAllowUnloadLanguages.Never;
 
         public List<TermData> mTerms = new List<TermData>();
 
-        public bool CaseInsensitiveTerms = false;
+        public bool CaseInsensitiveTerms;
 
         public LanguageSourceData.MissingTranslationAction OnMissingTranslation = LanguageSourceData.MissingTranslationAction.Fallback;
 
@@ -63,6 +67,7 @@ namespace I2.Loc
 		    public string Spreadsheet_LocalCSVSeparator = ",";
             public string Spreadsheet_LocalCSVEncoding = "utf-8";
             public bool Spreadsheet_SpecializationAsRows = true;
+            public bool Spreadsheet_SortRows = true;
 
             public string Google_Password = "change_this";
             public LanguageSourceData.eGoogleUpdateFrequency GoogleInEditorCheckFrequency = LanguageSourceData.eGoogleUpdateFrequency.Daily;
@@ -72,7 +77,7 @@ namespace I2.Loc
         void Awake()
         {
             #if UNITY_EDITOR
-            if (UnityEditor.BuildPipeline.isBuildingPlayer)
+            if (BuildPipeline.isBuildingPlayer)
                 return;
             #endif
    //         NeverDestroy = false;

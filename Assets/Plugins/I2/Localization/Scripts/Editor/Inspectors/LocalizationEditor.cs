@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿using UnityEditor;
+using UnityEngine;
 
 namespace I2.Loc
 {
@@ -10,15 +10,15 @@ namespace I2.Loc
 		SerializedProperty 	mProp_Assets, mProp_Languages, 
 							mProp_Google_WebServiceURL, mProp_GoogleUpdateFrequency, mProp_GoogleUpdateDelay, mProp_Google_SpreadsheetKey, mProp_Google_SpreadsheetName, mProp_Google_Password,
                             mProp_Spreadsheet_LocalFileName, mProp_Spreadsheet_LocalCSVSeparator, mProp_CaseInsensitiveTerms, mProp_Spreadsheet_LocalCSVEncoding,
-							mProp_OnMissingTranslation, mProp_AppNameTerm, mProp_IgnoreDeviceLanguage, mProp_Spreadsheet_SpecializationAsRows, mProp_GoogleInEditorCheckFrequency,
-                            mProp_HighlightLocalizedTargets, mProp_GoogleLiveSyncIsUptoDate, mProp_AllowUnloadingLanguages;
+							mProp_OnMissingTranslation, mProp_AppNameTerm, mProp_IgnoreDeviceLanguage, mProp_Spreadsheet_SpecializationAsRows, mProp_Spreadsheet_SortRows, mProp_GoogleInEditorCheckFrequency,
+                            mProp_HighlightLocalizedTargets, mProp_GoogleLiveSyncIsUptoDate, mProp_AllowUnloadingLanguages, mProp_GoogleUpdateSynchronization;
 
 		public static LanguageSourceData mLanguageSource;
         public static Object mLanguageSourceObject;
         public static LocalizationEditor mLanguageSourceEditor;
         public static Editor mCurrentInspector;
 
-        static bool mIsParsing = false;  // This is true when the editor is opening several scenes to avoid reparsing objects
+        static bool mIsParsing;  // This is true when the editor is opening several scenes to avoid reparsing objects
 
 		#endregion
 		
@@ -40,8 +40,9 @@ namespace I2.Loc
             get{ 
                 if (mStyle_WrapTextField==null)
                 {
-                    mStyle_WrapTextField = new GUIStyle("textField");
+                    mStyle_WrapTextField = new GUIStyle(EditorStyles.textArea);
                     mStyle_WrapTextField.wordWrap = true;
+                    mStyle_WrapTextField.fixedHeight = 0;
                 }
                 return mStyle_WrapTextField;
             }
@@ -54,7 +55,7 @@ namespace I2.Loc
 
 		public void Custom_OnEnable( LanguageSourceData sourceData, SerializedProperty propSource)
 		{
-			bool ForceParse = (mLanguageSource != sourceData);
+			bool ForceParse = mLanguageSource != sourceData;
 
             mLanguageSource = sourceData;
             mLanguageSourceEditor = this;
@@ -67,6 +68,7 @@ namespace I2.Loc
             mProp_Languages                        = propSource.FindPropertyRelative("mLanguages");
             mProp_Google_WebServiceURL             = propSource.FindPropertyRelative("Google_WebServiceURL");
             mProp_GoogleUpdateFrequency            = propSource.FindPropertyRelative("GoogleUpdateFrequency");
+            mProp_GoogleUpdateSynchronization      = propSource.FindPropertyRelative("GoogleUpdateSynchronization");
             mProp_GoogleInEditorCheckFrequency     = propSource.FindPropertyRelative("GoogleInEditorCheckFrequency");
             mProp_GoogleUpdateDelay                = propSource.FindPropertyRelative("GoogleUpdateDelay");
             mProp_Google_SpreadsheetKey            = propSource.FindPropertyRelative("Google_SpreadsheetKey");
@@ -77,6 +79,7 @@ namespace I2.Loc
             mProp_Spreadsheet_LocalCSVSeparator    = propSource.FindPropertyRelative("Spreadsheet_LocalCSVSeparator");
             mProp_Spreadsheet_LocalCSVEncoding     = propSource.FindPropertyRelative("Spreadsheet_LocalCSVEncoding");
             mProp_Spreadsheet_SpecializationAsRows = propSource.FindPropertyRelative("Spreadsheet_SpecializationAsRows");
+            mProp_Spreadsheet_SortRows             = propSource.FindPropertyRelative("Spreadsheet_SortRows");
             mProp_OnMissingTranslation             = propSource.FindPropertyRelative("OnMissingTranslation");
 			mProp_AppNameTerm					   = propSource.FindPropertyRelative("mTerm_AppName");
 			mProp_IgnoreDeviceLanguage			   = propSource.FindPropertyRelative("IgnoreDeviceLanguage");
@@ -90,7 +93,7 @@ namespace I2.Loc
 				else
 					mSpreadsheetMode = eSpreadsheetMode.Google;
 
-				mCurrentViewMode = (mLanguageSource.mLanguages.Count>0 ? eViewMode.Keys : eViewMode.Languages);
+				mCurrentViewMode = mLanguageSource.mLanguages.Count>0 ? eViewMode.Keys : eViewMode.Languages;
 
 				UpdateSelectedKeys();
 
@@ -157,27 +160,31 @@ namespace I2.Loc
 			if (mLanguageSource.mTerms.Count<1000)
 				Undo.RecordObject(target, "LanguageSource");
 
-			GUI.backgroundColor = Color.Lerp (Color.black, Color.gray, 1);
-			GUILayout.BeginVertical(LocalizeInspector.GUIStyle_Background);
-			GUI.backgroundColor = Color.white;
+			//GUI.backgroundColor = Color.Lerp (Color.black, Color.gray, 1);
+			//GUILayout.BeginVertical(LocalizeInspector.GUIStyle_Background);
+			//GUI.backgroundColor = Color.white;
 			
 			if (GUILayout.Button("Language Source", LocalizeInspector.GUIStyle_Header))
 			{
 				Application.OpenURL(LocalizeInspector.HelpURL_Documentation);
 			}
 
-				InitializeStyles();
+			InitializeStyles();
 
-				GUILayout.Space(10);
+			GUILayout.Space(10);
 
-				OnGUI_Main();
+            //GUI.backgroundColor = Color.Lerp(GUITools.LightGray, Color.white, 0.5f);
+            //GUILayout.BeginVertical(LocalizeInspector.GUIStyle_Background);
+            //GUI.backgroundColor = Color.white;
+            OnGUI_Main();
+            //GUILayout.EndVertical();
 
-			GUILayout.Space (10);
+            GUILayout.Space (10);
 			GUILayout.FlexibleSpace();
 
             GUITools.OnGUI_Footer("I2 Localization", LocalizationManager.GetVersion(), LocalizeInspector.HelpURL_forum, LocalizeInspector.HelpURL_Documentation, LocalizeInspector.HelpURL_AssetStore);
 
-			GUILayout.EndVertical();
+			//GUILayout.EndVertical();
 
 			serializedObject.ApplyModifiedProperties();
             if (Event.current.type == EventType.Repaint)

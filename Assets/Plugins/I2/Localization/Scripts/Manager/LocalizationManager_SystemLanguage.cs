@@ -1,9 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Linq;
-using System.Globalization;
-using System.Collections;
 
 namespace I2.Loc
 {
@@ -11,9 +6,9 @@ namespace I2.Loc
     {
         static string mCurrentDeviceLanguage;
 
-        public static string GetCurrentDeviceLanguage()
+        public static string GetCurrentDeviceLanguage( bool force = false )
         {
-            if (string.IsNullOrEmpty(mCurrentDeviceLanguage))
+            if (force || string.IsNullOrEmpty(mCurrentDeviceLanguage))
                 DetectDeviceLanguage();
 
             return mCurrentDeviceLanguage;

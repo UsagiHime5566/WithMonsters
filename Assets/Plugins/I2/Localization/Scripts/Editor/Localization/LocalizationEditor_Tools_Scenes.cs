@@ -1,7 +1,8 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
+using UnityEngine;
 
 namespace I2.Loc
 {
@@ -9,7 +10,7 @@ namespace I2.Loc
 	{
 		#region Variables
 		EditorBuildSettingsScene[] mScenesInBuildSettings;
-		bool Tools_ShowScenesList = false;
+		bool Tools_ShowScenesList;
 		#endregion
 
 		#region GUI
@@ -48,19 +49,21 @@ namespace I2.Loc
 			}
 			OnGUI_ScenesList_TitleBar();
 
-			mScrollPos_BuildScenes = GUILayout.BeginScrollView( mScrollPos_BuildScenes, EditorStyles.textArea, GUILayout.Height ( SmallSize ? 100 : 200));
-			
-			for (int i=0, imax=sceneList.Count; i<imax; ++i)
+            GUI.backgroundColor = Color.Lerp(GUITools.LightGray, Color.white, 0.5f);
+            mScrollPos_BuildScenes = GUILayout.BeginScrollView( mScrollPos_BuildScenes, LocalizeInspector.GUIStyle_OldTextArea, GUILayout.Height ( SmallSize ? 100 : 200));
+            GUI.backgroundColor = Color.white;
+
+            for (int i=0, imax=sceneList.Count; i<imax; ++i)
 			{
 				GUILayout.BeginHorizontal();
 				
 					OnGUI_SelectableToogleListItem( sceneList[i], ref mSelectedScenes, "OL Toggle" );
 					
 					bool bSelected = mSelectedScenes.Contains(sceneList[i]);
-					GUI.color = (bSelected ? Color.white : Color.Lerp(Color.gray, Color.white, 0.5f));
+					GUI.color = bSelected ? Color.white : Color.Lerp(Color.gray, Color.white, 0.5f);
 
 					string scenePath = sceneList[i];
-					if (scenePath.StartsWith("assets/", System.StringComparison.OrdinalIgnoreCase))
+					if (scenePath.StartsWith("assets/", StringComparison.OrdinalIgnoreCase))
 						scenePath = scenePath.Substring("Assets/".Length);
 
 					if (currentScene == sceneList[i])
@@ -169,7 +172,7 @@ namespace I2.Loc
 				Editor_OpenScene( InitialScene );
 			
 			if (mLanguageSource!=null)
-				Selection.activeObject = mLanguageSource.owner;
+				Selection.activeObject = mLanguageSource.ownerObject;
 		}
 		#endregion
 	}

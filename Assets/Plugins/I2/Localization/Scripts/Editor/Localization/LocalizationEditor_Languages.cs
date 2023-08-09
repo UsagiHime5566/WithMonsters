@@ -1,7 +1,7 @@
-using UnityEngine;
-using UnityEditor;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
+using UnityEngine;
 
 namespace I2.Loc
 {
@@ -12,7 +12,7 @@ namespace I2.Loc
 		private Dictionary<string, TranslationQuery> mTranslationRequests = new Dictionary<string, TranslationQuery> ();
         private bool mAppNameTerm_Expanded;
 
-        private List<string> mLanguageCodePopupList = null;
+        private List<string> mLanguageCodePopupList;
 
 		#endregion
 
@@ -54,7 +54,7 @@ namespace I2.Loc
 				GUILayout.BeginVertical();
 					GUILayout.Space(7);
 
-            mProp_IgnoreDeviceLanguage.boolValue = EditorGUILayout.Popup(mProp_IgnoreDeviceLanguage.boolValue?1:0, new string[]{"Device Language", "First in List"+firstLanguage}, GUILayout.ExpandWidth(true))==1;
+            mProp_IgnoreDeviceLanguage.boolValue = EditorGUILayout.Popup(mProp_IgnoreDeviceLanguage.boolValue?1:0, new[]{"Device Language", "First in List"+firstLanguage}, GUILayout.ExpandWidth(true))==1;
 				GUILayout.EndVertical();
 			GUILayout.EndHorizontal();
         }
@@ -76,7 +76,9 @@ namespace I2.Loc
 			int IndexLanguageToDelete = -1;
 			int LanguageToMoveUp = -1;
 			int LanguageToMoveDown = -1;
-			mScrollPos_Languages = GUILayout.BeginScrollView( mScrollPos_Languages, EditorStyles.textArea, GUILayout.MinHeight (100), GUILayout.MaxHeight(Screen.height), GUILayout.ExpandHeight(false));
+            GUI.backgroundColor = Color.Lerp(GUITools.LightGray, Color.white, 0.5f);
+            mScrollPos_Languages = GUILayout.BeginScrollView( mScrollPos_Languages, LocalizeInspector.GUIStyle_OldTextArea, GUILayout.MinHeight (200), /*GUILayout.MaxHeight(Screen.height),*/ GUILayout.ExpandHeight(false));
+            GUI.backgroundColor = Color.white;
 
             if (mLanguageCodePopupList == null || mLanguageCodePopupList.Count==0)
             {
@@ -137,7 +139,7 @@ namespace I2.Loc
 
                 GUILayout.EndHorizontal();
 
-				GUI.enabled = (i<imax-1);
+				GUI.enabled = i<imax-1;
 				if (GUILayout.Button( "\u25BC", EditorStyles.toolbarButton, GUILayout.Width(18))) LanguageToMoveDown = i;
 				GUI.enabled = i>0;
 				if (GUILayout.Button( "\u25B2", EditorStyles.toolbarButton, GUILayout.Width(18))) LanguageToMoveUp = i;
@@ -150,7 +152,7 @@ namespace I2.Loc
 
 				if (TestButtonArg( eTest_ActionType.Button_Languages_TranslateAll, i, new GUIContent("Translate", "Translate all empty terms"), EditorStyles.toolbarButton, GUILayout.ExpandWidth(false))) 
 				{
-                    GUITools.DelayedCall(() => TranslateAllToLanguage(LanName));
+                    GUITools.DelayedCall( () => TranslateAllToLanguage(LanName));
 				}
 				GUI.enabled = true;
                 GUI.color = Color.white;
@@ -176,10 +178,10 @@ namespace I2.Loc
 			if (mConnection_WWW!=null || mConnection_Text.Contains("Translating"))
 			{
 				// Connection Status Bar
-				int time = (int)((Time.realtimeSinceStartup % 2) * 2.5);
+				int time = (int)(Time.realtimeSinceStartup % 2 * 2.5);
 				string Loading = mConnection_Text + ".....".Substring(0, time);
 				GUI.color = Color.gray;
-				GUILayout.BeginHorizontal(EditorStyles.textArea);
+				GUILayout.BeginHorizontal(LocalizeInspector.GUIStyle_OldTextArea);
 				GUILayout.Label (Loading, EditorStyles.miniLabel);
 				GUI.color = Color.white;
                 if (GUILayout.Button("Cancel", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false)))
@@ -241,9 +243,9 @@ namespace I2.Loc
 		
 		void OnGUI_AddLanguage( SerializedProperty Prop_Languages)
 		{
-			//--[ Add Language Upper Toolbar ]-----------------
-			
-			GUILayout.BeginVertical();
+            //--[ Add Language Upper Toolbar ]-----------------
+
+            GUILayout.BeginVertical();
 			GUILayout.BeginHorizontal();
 			
 			GUILayout.BeginHorizontal(EditorStyles.toolbar);
@@ -262,10 +264,10 @@ namespace I2.Loc
             GUI.enabled = true;
 			
 			GUILayout.EndHorizontal();
-			
-			
-			//--[ Add Language Bottom Toolbar ]-----------------
-			
+
+
+            //--[ Add Language Bottom Toolbar ]-----------------
+
 			GUILayout.BeginHorizontal();
 			
 			//-- Language Dropdown -----------------
@@ -391,7 +393,7 @@ namespace I2.Loc
             {
                 foreach (var term in mTranslationTerms)
                 {
-                    var termData = mLanguageSource.GetTermData(term, false);
+                    var termData = mLanguageSource.GetTermData(term);
                     if (termData == null)
                         continue;
                     if (termData.TermType != eTermType.Text)

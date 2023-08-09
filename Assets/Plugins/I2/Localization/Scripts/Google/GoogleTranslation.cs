@@ -1,10 +1,4 @@
-﻿using UnityEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace I2.Loc
 {
@@ -12,20 +6,22 @@ namespace I2.Loc
 
 	public static partial class GoogleTranslation
 	{
-		public static bool CanTranslate ()
+        public delegate void fnOnTranslated(string Translation, string Error);
+
+        public static bool CanTranslate ()
 		{
-			return (LocalizationManager.Sources.Count > 0 && 
-					!string.IsNullOrEmpty (LocalizationManager.GetWebServiceURL()));
+			return LocalizationManager.Sources.Count > 0 && 
+			       !string.IsNullOrEmpty (LocalizationManager.GetWebServiceURL());
 		}
 
 
         // LanguageCodeFrom can be "auto"
         // After the translation is returned from Google, it will call OnTranslationReady(TranslationResult, ErrorMsg)
         // TranslationResult will be null if translation failed
-        public static void Translate( string text, string LanguageCodeFrom, string LanguageCodeTo, Action<string, string> OnTranslationReady )
+        public static void Translate( string text, string LanguageCodeFrom, string LanguageCodeTo, fnOnTranslated OnTranslationReady )
 		{
             LocalizationManager.InitializeIfNeeded();
-            if (!GoogleTranslation.CanTranslate())
+            if (!CanTranslate())
             {
                 OnTranslationReady(null, "WebService is not set correctly or needs to be reinstalled");
                 return;
@@ -38,7 +34,7 @@ namespace I2.Loc
                 return;
             }
 
-            TranslationDictionary queries = new TranslationDictionary();
+            TranslationDictionary queries = new TranslationDictionary(System.StringComparer.Ordinal);
 
 
             // Unsupported language
@@ -67,7 +63,7 @@ namespace I2.Loc
         // In those cases, its advisable to use the Async version  (GoogleTranslation.Translate(....))
         public static string ForceTranslate ( string text, string LanguageCodeFrom, string LanguageCodeTo )
         {
-            TranslationDictionary dict = new TranslationDictionary();
+            TranslationDictionary dict = new TranslationDictionary(System.StringComparer.Ordinal);
             AddQuery(text, LanguageCodeFrom, LanguageCodeTo, dict);
 
             var job = new TranslationJob_Main(dict, null);

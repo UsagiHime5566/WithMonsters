@@ -1,7 +1,8 @@
-using UnityEditor;
-using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using UnityEditor;
+using UnityEngine;
 
 namespace I2.Loc
 {
@@ -11,7 +12,7 @@ namespace I2.Loc
 
 		List<string> mCharSetTool_Languages = new List<string>();
 		string mCharSet = string.Empty;
-        bool mCharSetTool_CaseSensitive = false;
+        bool mCharSetTool_CaseSensitive;
 
 		#endregion
 		
@@ -52,11 +53,13 @@ namespace I2.Loc
 
 			GUILayout.EndHorizontal ();
 
-			//--[ Language List ]--------------------------
+            //--[ Language List ]--------------------------
 
-			mScrollPos_Languages = GUILayout.BeginScrollView( mScrollPos_Languages, EditorStyles.textArea, GUILayout.MinHeight (100), GUILayout.MaxHeight(Screen.height), GUILayout.ExpandHeight(false));
+            GUI.backgroundColor = Color.Lerp(GUITools.LightGray, Color.white, 0.5f);
+            mScrollPos_Languages = GUILayout.BeginScrollView( mScrollPos_Languages, LocalizeInspector.GUIStyle_OldTextArea, GUILayout.MinHeight (100), GUILayout.MaxHeight(Screen.height), GUILayout.ExpandHeight(false));
+            GUI.backgroundColor = Color.white;
 
-			for (int i=0, imax=mLanguageSource.mLanguages.Count; i<imax; ++i)
+            for (int i=0, imax=mLanguageSource.mLanguages.Count; i<imax; ++i)
 			{
 				GUILayout.BeginHorizontal();
 					var language = mLanguageSource.mLanguages[i].Name;
@@ -81,7 +84,7 @@ namespace I2.Loc
 			//GUILayout.Space (5);
 			
 			GUI.backgroundColor = Color.Lerp (Color.gray, Color.white, 0.2f);
-			GUILayout.BeginVertical(EditorStyles.textArea, GUILayout.Height(1));
+			GUILayout.BeginVertical(LocalizeInspector.GUIStyle_OldTextArea, GUILayout.Height(1));
 			GUI.backgroundColor = Color.white;
 			
 			EditorGUILayout.HelpBox("This tool shows all characters used in the selected languages", MessageType.Info);
@@ -133,8 +136,8 @@ namespace I2.Loc
 					AppendToCharSet( sb, termData.Languages[iLanguage], isRTL );
 				}
 			}
-            var bytes = System.Text.Encoding.UTF8.GetBytes( sb.ToArray().OrderBy(c => c).ToArray() );
-            mCharSet = System.Text.Encoding.UTF8.GetString(bytes);
+            var bytes = Encoding.UTF8.GetBytes( sb.ToArray().OrderBy(c => c).ToArray() );
+            mCharSet = Encoding.UTF8.GetString(bytes);
 		}
 
 		void AppendToCharSet( HashSet<char> sb, string text, bool isRTL )
